@@ -1,0 +1,346 @@
+---
+title: "Diabetes Among The Pima Indians: An Exploratory Analysis"
+description: |
+  In this post we will explore the Pima Idian datset from the UCI repository. This post will aim to showcase different ways of thinking of your 
+  data. Most novices to data science would rush into data preprocessing and not explore the data properly. The data cleaning stage can be subjective 
+  at times and here I offer my own view and opinons on this dataset
+author:
+  - name: Asel Mendis
+date: 11-06-2018
+output:
+  radix::radix_article:
+    self_contained: false
+categories:
+  - Data Cleaning
+  - R 
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Data
+
+The data used in the current project contains a number of diagnostic measures of type 2 diabetes in women of the Pima Indian heritage, and whether or not the individual has type 2 diabetes. The dataset was obtained from Kaggle at (https://www.kaggle.com/uciml/pima-indians-diabetes-database). There is a total of 768 observations and 9 variables. The variables in the dataset are:
+-	Pregnancies. Number of pregnancies. 
+-	Glucose. The blood plasma glucose concentration after a 2 hour oral glucose tolerance test.
+-	BloodPressure. Diastolic blood pressure (mm/HG).
+-	SkinThickness. Skinfold thickness of the triceps (mm).
+-	Insulin. 2 hour serum insulin (mu U/ml).
+-	BMI. Body mass index (kg/m squared)
+-	DiabetesPedigreeFunction. A function that determines the risk of type 2 diabetes based on family history, the larger the function, the higher the risk of type 2 diabetes.
+-	Age. Age (years).
+-	Outcome. Whether the person is diagnosed with type 2 diabetes (1 = yes, 0 = no).
+
+## Preprocessing
+```{r Libraries, message=FALSE}
+library(readr)
+library(tidyverse)
+library(dplyr)
+library(tidyr)
+library(knitr)
+library()
+```
+
+```{r Working_Directory, message=FALSE, echo=FALSE, include=FALSE}
+Diabetes <- read_csv("C:/Users/aselr/Documents/RMIT/SEMESTER 2 2018/Analysis of Categorical Data/Final Project/Phase 1/diabetes.csv") %>% 
+  as.data.frame()
+```
+The reason to add `as.data.frame()` is that sometimes the data will be read into a list format but we want it in a data frame format for this project.
+
+
+## Overview
+```{r Overview}
+glimpse(Diabetes)
+```
+
+```{r Summary}
+mlr::summarizeColumns(Diabetes) %>% 
+  kable(caption="Summary Table of Diabetes") 
+```
+
+
+## Type Conversions
+
+### Factors
+
+The outcome variable needs to be converted into a categorical variable. It will be ordered to accomodate analysis purposes in the near future.
+
+```{r}
+Diabetes$Outcome <- as.factor(unlist(Diabetes$Outcome))
+Diabetes$Outcome <- factor(Diabetes$Outcome, levels=c("1", "0"),
+                           labels = c("Positive", "Negative"))
+summary(Diabetes$Outcome)
+```
+We can see that there are almost twice as many people wihtout diabetes than there are with diabetes. While there is no universal cutoff for the number of rows for your target variable, this should suffice. 
+
+*We just need to make sure that there is enough data for your model to learn how to differentiate between the two*
+
+### Numeric
+
+The following variables:
+
+	* Glucose
+
+	* BloodPressure
+
+	* SkinThickness
+
+	* Insulin
+
+	* BMI 
+
+need to be converted into numeric variables from its current integer class. These variables have decimal values and its absecnce could potentially create misleading results and distort specified ranges of risk represented by those medical tests.
+
+```{r}
+Diabetes$Glucose <-  as.numeric(Diabetes$Glucose)
+Diabetes$BloodPressure <-  as.numeric(Diabetes$BloodPressure)
+Diabetes$SkinThickness <-  as.numeric(Diabetes$SkinThickness)
+Diabetes$Insulin <-  as.numeric(Diabetes$Insulin)
+Diabetes$BMI <-  as.numeric(Diabetes$BMI)
+Diabetes$Age <- as.integer(Diabetes$Age)
+```
+
+
+## Missing Values
+${6/9}$ variables in the dataset have a number of zero markers. It appears that after taking the sum of each column and row separately, there are 763 `0` values in the dataset. Alarmingly, this represents almost 100% of our observations.
+
+```{r}
+list(
+`Column` = colSums(Diabetes==0),
+Row = sum(rowSums(Diabetes==0))
+)
+```
+
+A value of '0' does not necessarily mean it is a missing value. For example:
+A woman has a zero record of pregancies because that woman has not been pregnant. 
+
+This is one example on how careful you have to be when preprocessig your data for missing values. Zero does not mean it is missing. However in additon to that point, zero values could create problems when passing it to a machine learning model. Techniques like Regression can give you an estimate of the output when the variable is zero. Anotther method of dealing with zeros could be to bin the variable which will then create a categorical variable.
+
+```{r}
+Diabetes1 <- Diabetes %>%  filter(Insulin > 0)
+colSums(Diabetes1==0)
+```
+
+I first filtered on `Insulin` due to the fact that it had the most zero values and now we are left with only 59 zero values with almost all the concentration in `Pregnancies`. 
+
+```{r}
+Diabetes1 <- Diabetes1 %>%  filter(Pregnancies> 0)
+colSums(Diabetes1==0)
+```
+Almost done! We have only one zero value in `Glucose`.
+
+```{r}
+Diabetes1 <- Diabetes1 %>%  filter(Glucose> 0)
+colSums(Diabetes1==0)
+```
+
+Our data is now free of zero values. BUT HOW MUCH DATA AND INFORMATION HAVE WE LOST BECAUSE OF THIS?
+
+```{r}
+summary(Diabetes1$Outcome)
+``` 
+
+It looks like we are left with 336 observations and the ratio of target variables has not changed. `r paste(( ((nrow(Diabetes)-nrow(Diabetes1))/nrow(Diabetes))*100) %>% round(0), "%")` of our dataset has had to be filtered out. That is a significant chunk of our data. This is probably not the best way to go about this step.
+
+But in my perspective, because this is medical data, simply imputing these zeroes with the mean or mode seems like it can generate dangerous misleaeding results. Each participants biological data cannot be just replaced with a mean from a group.
+
+WHEN DEALING WITH MISSING VALUES, PROCEED WITH CAUTION AND ALWAYS TAKE YOUR ACTIONS INTO ACCOUNT ESPECIALLY IF YOU DO THIS FOR SOMEONE ELSE OR YOUR EMPLOYER.
+
+
+
+# Feature Engineering
+
+The dataset provides many informative features that need to be complemented with additional information:
+
+* BMI can be supplemented with its respective range of obesity criteria.
+
+* Glucose can be further supplememted with its criteria for normal and abnormal levels in the body.
+ 
+* Blood pressure is more of an incomplete set of the data. We would need systolic blood pressure to be reported to categorize it into more meaningful information.
+
+## BMI
+
+```{r}
+Diabetes1$Obesity <- 
+        ifelse(Diabetes1$BMI<19,"Underweight",
+				ifelse(Diabetes1$BMI>=19 & 
+				         Diabetes1$BMI<=25, "Normal", 
+				ifelse(Diabetes1$BMI>=25 & 
+				  Diabetes1$BMI<=30, "Overweight","Obese"))) %>% 
+    factor(levels=c("Underweight","Normal",
+                "Overweight","Obese"))
+
+list(Obesity = summary(Diabetes1$Obesity))
+
+```
+
+It appears that the majority is classified as obese and only one person is classified as underweight. When we try to induce further analysis on this dataset in the future, `Underweight` is likely to cause trouble because of it only containing one value.
+
+```{r}
+Diabetes1 <- filter(Diabetes1, Obesity!='Underweight') %>% 
+              droplevels()
+list(Obesity = summary(Diabetes1$Obesity))
+```
+
+Filtering the dataset to exclude `Underweight` will still leave an unused factor level. Because of this we use `droplevels()` from base R to remove it. 
+
+
+# Glucose
+
+With a 2 hour 'Oral Glucose Tolerance Test' (OGTT), people are considered to not have diabetes if after 2 hours of administering the test their levels are below 7.8 mmol/L.
+To categorize the levels of glucose tolerance, we will use the following criteria:
+
+	* Hypoglycemia (Low Blood Sugar) - <2.2 mmol/L
+
+	* Normal/No Diabetes - >=2.2 mmol/L - <=7.8mmol/L
+
+	* Prediabetes (Hyperglycemia / High Blood Sugar) - >7.8 mmol/L - <=11.1 mmol/L
+
+	* Diabetes - >11.1 mmol/L
+
+**Although one of the levels says this person has diabetes, it is not a final diganosis. Other factors will have to be taken to account. To avoid misleads, 'Diabetes' in this circumstance REFERS TO THE TEST RESULT ANME AND NOT A FINAL DIAGNOSIS OF TYPE 2 DIABETES'**
+
+The unit of measurement for the 2-hour OGTT in this dataset is assumed to be in milligrams per deciliter (mg/dl). It can be converted to Milimoles per liter (mmol/l) so that we may appply a qualitative test result to the numeric results. Multiplying the current results by 0.0555 will convert them to be measured in mmol/l.
+
+```{r}
+Diabetes1$Glucose <- Diabetes1$Glucose*0.0555
+```
+
+```{r}
+Diabetes1$`Glucose(mmol/l)` <-
+	if_else(Diabetes1$Glucose<2.2,"Hypoglycemia",
+	if_else(Diabetes1$Glucose>=2.2 & 
+	          Diabetes1$Glucose<=7.8,"Normal",
+	if_else(Diabetes1$Glucose>7.8 & 
+	          Diabetes1$Glucose<=11.1,
+	        "Hyperglycemia","Diabetes"))) %>% 
+  factor()
+```
+
+```{r}
+list(
+`Test Result` = summary(
+        Diabetes1$`Glucose(mmol/l)`))
+```
+
+It appears that 72% of participants have Normal Glucose levels and the remaining 22% have Prediabetes.
+
+
+## Blood Pressure
+When measuring Blood Pressure, two measures are used:
+
+  	* Systolic
+    	- Measures the pressure in blood vessels when the heart beats. 
+
+  	* Diastolic
+    	- Measures the pressure in blood vessels when the heart rests between beats. 
+    
+In this dataset, only the diastolic blood Pressure is reported. This requires us to proceed with caution. 
+
+As reported by the Centers for Disease Control and Prevention, blood pressure is measured using systolic and diastolic units. When they are reported we can make the following inferences:
+
+ * Normal
+  	- Systolic <120mmHg,
+  	- Diastolic <80mmHg   
+
+ * Prehypertension 
+ 	 - Systolic >=120mmHg - <=139mmHg
+  	 - Diastolic >=80 - <=89mmHg 
+
+ * High 
+ 	- Systolic: >=140mmHg
+  	- Diastolic: >=90mmHg 
+
+BECAUSE SYSTOLIC PRESSURE IS NOT REPORTED, I DO NOT FEEL COMFORTABLE IN PROCEEDING WITH THIS VARIBALE. THIS IS A SUBJECTIVE DECISION OF MINE.
+
+```{r}
+Diabetes1$BloodPressure <- NULL
+```
+
+
+```{r echo=FALSE}
+load('C:/Users/aselr/Documents/R Programming/mode.rda') # Function to calculate mode
+```
+
+# Visualisation of variables 
+
+## Numeric Variables {.tabset .tabset-fade}
+
+### Pregnancies
+```{r}
+ggplot(Diabetes1, aes(y=Pregnancies, x=Outcome)) + 
+      geom_boxplot() + 
+      xlab("Frequency") + ylab("Pregnancies") +
+      stat_summary(fun.y=mode, colour="darkred", 
+                  geom="point", shape=16, size=5)
+```
+
+### Age
+```{r}
+ggplot(Diabetes1, aes(y=Age, x=Outcome)) + 
+      geom_boxplot() + 
+      xlab("Frequency") + ylab("Age") +
+      stat_summary(fun.y=mode, colour="darkred", 
+                  geom="point", shape=16, size=5)
+```
+
+### Skin Thickness
+```{r}
+ggplot(Diabetes1, aes(y=SkinThickness, x=Outcome)) + 
+      geom_boxplot() + 
+      xlab("Frequency") + ylab("SkinThickness") +
+      stat_summary(fun.y=mode, colour="darkred", 
+                  geom="point", shape=16, size=5)
+```
+
+### Diabetes Pedigree Function
+```{r}
+ggplot(Diabetes1, aes(y=DiabetesPedigreeFunction, x=Outcome)) + 
+      geom_boxplot() + 
+      xlab("Frequency") + ylab("DiabetesPedigreeFunction") +
+      stat_summary(fun.y=mode, colour="darkred", 
+                  geom="point", shape=16, size=5)
+```
+
+
+
+
+## Categorical Variables (% of Outcome) {.tabset .tabset-fade}
+
+### Obesity
+```{r}
+obesity <- table(Diabetes1$Obesity, Diabetes1$Outcome,
+                          dnn = c("Obesity", "Outcome")) %>% 
+            prop.table(2) 
+obesity %>% round(2) %>% 
+  kable(format = 'html')
+```
+
+### Glucose
+```{r}
+glucose <- table(Diabetes1$`Glucose(mmol/l)`, Diabetes1$Outcome,
+                          dnn = c("Glucose Level", "Outcome")) %>% 
+            prop.table(2) 
+glucose %>% round(2) %>% 
+  kable(format = 'html')
+```
+
+# Final Data
+
+```{r}
+Diabetes1$BMI <-  NULL
+Diabetes1$Glucose <- NULL
+```
+
+I have already binned these two variables and are not needed further. However, since I have saved two datasets in this report, I can access the corresponding numeric variables if needed. This can prove useful to trace back to debug any errors.
+
+
+
+
+```{r}
+summary(Diabetes1)
+```
+
+
+
