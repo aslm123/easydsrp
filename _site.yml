@@ -16,4 +16,8 @@ navbar:
       href: about.html
     - icon: fa fa-rss
       href: index.xml
+ collections:
+  posts:
+    disqus: easy-ds-r-python
+    share: [twitter, linkedin, facebook]
 output: radix::radix_article
