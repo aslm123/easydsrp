@@ -7,6 +7,7 @@ description: |
   make them a formiddable duo. I have been wanting to explore these two languages in the 
   data science doomain and this is how I would like to share my knowledge with the world.
 output_dir: "docs"
+base_url: https://aslm123.github.io/easydsrp/
 navbar:
   right:
     - text: "Home"
