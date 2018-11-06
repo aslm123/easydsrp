@@ -23,6 +23,7 @@
 
 <meta property="description" itemprop="description" content="In this post we will explore the Pima Idian datset from the UCI repository. This post will aim to showcase different ways of thinking of your &#10;data. Most novices to data science would rush into data preprocessing and not explore the data properly. The data cleaning stage can be subjective &#10;at times and here I offer my own view and opinons on this dataset"/>
 
+<link rel="canonical" href="https://aslm123.github.io/easydsrp/posts/2018-11-06-diabetes-among-the-pima-indians-an-exploratory-analysis/"/>
 
 <!--  https://schema.org/Article -->
 <meta property="article:published" itemprop="datePublished" content="2018-11-06"/>
@@ -33,19 +34,33 @@
 <meta property="og:title" content="Easy Data Science with R and Python: Diabetes Among The Pima Indians: An Exploratory Analysis"/>
 <meta property="og:type" content="article"/>
 <meta property="og:description" content="In this post we will explore the Pima Idian datset from the UCI repository. This post will aim to showcase different ways of thinking of your &#10;data. Most novices to data science would rush into data preprocessing and not explore the data properly. The data cleaning stage can be subjective &#10;at times and here I offer my own view and opinons on this dataset"/>
+<meta property="og:url" content="https://aslm123.github.io/easydsrp/posts/2018-11-06-diabetes-among-the-pima-indians-an-exploratory-analysis/"/>
+<meta property="og:image" content="https://aslm123.github.io/easydsrp/posts/2018-11-06-diabetes-among-the-pima-indians-an-exploratory-analysis/diabetes-among-the-pima-indians-an-exploratory-analysis_files/figure-html5/unnamed-chunk-15-1.png"/>
+<meta property="og:image:width" content="1248"/>
+<meta property="og:image:height" content="768"/>
 <meta property="og:locale" content="en_US"/>
 <meta property="og:site_name" content="Easy Data Science with R and Python"/>
 
 <!--  https://dev.twitter.com/cards/types/summary -->
-<meta property="twitter:card" content="summary"/>
+<meta property="twitter:card" content="summary_large_image"/>
 <meta property="twitter:title" content="Easy Data Science with R and Python: Diabetes Among The Pima Indians: An Exploratory Analysis"/>
 <meta property="twitter:description" content="In this post we will explore the Pima Idian datset from the UCI repository. This post will aim to showcase different ways of thinking of your &#10;data. Most novices to data science would rush into data preprocessing and not explore the data properly. The data cleaning stage can be subjective &#10;at times and here I offer my own view and opinons on this dataset"/>
+<meta property="twitter:url" content="https://aslm123.github.io/easydsrp/posts/2018-11-06-diabetes-among-the-pima-indians-an-exploratory-analysis/"/>
+<meta property="twitter:image" content="https://aslm123.github.io/easydsrp/posts/2018-11-06-diabetes-among-the-pima-indians-an-exploratory-analysis/diabetes-among-the-pima-indians-an-exploratory-analysis_files/figure-html5/unnamed-chunk-15-1.png"/>
+<meta property="twitter:image:width" content="1248"/>
+<meta property="twitter:image:height" content="768"/>
 
+<!--  https://scholar.google.com/intl/en/scholar/inclusion.html#indexing -->
+<meta name="citation_title" content="Easy Data Science with R and Python: Diabetes Among The Pima Indians: An Exploratory Analysis"/>
+<meta name="citation_fulltext_html_url" content="https://aslm123.github.io/easydsrp/posts/2018-11-06-diabetes-among-the-pima-indians-an-exploratory-analysis/"/>
+<meta name="citation_online_date" content="2018/11/06"/>
+<meta name="citation_publication_date" content="2018/11/06"/>
+<meta name="citation_author" content="Asel Mendis"/>
 <!--/radix_placeholder_meta_tags-->
   <!--radix_placeholder_rmarkdown_metadata-->
 
 <script type="text/json" id="radix-rmarkdown-metadata">
-{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["title","description","author","date","output"]}},"value":[{"type":"character","attributes":{},"value":["Diabetes Among The Pima Indians: An Exploratory Analysis"]},{"type":"character","attributes":{},"value":["In this post we will explore the Pima Idian datset from the UCI repository. This post will aim to showcase different ways of thinking of your \ndata. Most novices to data science would rush into data preprocessing and not explore the data properly. The data cleaning stage can be subjective \nat times and here I offer my own view and opinons on this dataset"]},{"type":"list","attributes":{},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name"]}},"value":[{"type":"character","attributes":{},"value":["Asel Mendis"]}]}]},{"type":"character","attributes":{},"value":["11-06-2018"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["radix::radix_article"]}},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["self_contained"]}},"value":[{"type":"logical","attributes":{},"value":[false]}]}]}]}
+{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["title","description","author","date","output","citation_url","canonical_url"]}},"value":[{"type":"character","attributes":{},"value":["Diabetes Among The Pima Indians: An Exploratory Analysis"]},{"type":"character","attributes":{},"value":["In this post we will explore the Pima Idian datset from the UCI repository. This post will aim to showcase different ways of thinking of your \ndata. Most novices to data science would rush into data preprocessing and not explore the data properly. The data cleaning stage can be subjective \nat times and here I offer my own view and opinons on this dataset"]},{"type":"list","attributes":{},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name"]}},"value":[{"type":"character","attributes":{},"value":["Asel Mendis"]}]}]},{"type":"character","attributes":{},"value":["11-06-2018"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["radix::radix_article"]}},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["self_contained"]}},"value":[{"type":"logical","attributes":{},"value":[false]}]}]},{"type":"character","attributes":{},"value":["https://aslm123.github.io/easydsrp/posts/2018-11-06-diabetes-among-the-pima-indians-an-exploratory-analysis/"]},{"type":"character","attributes":{},"value":["https://aslm123.github.io/easydsrp/posts/2018-11-06-diabetes-among-the-pima-indians-an-exploratory-analysis/"]}]}
 </script>
 <!--/radix_placeholder_rmarkdown_metadata-->
   
@@ -1885,6 +1900,41 @@ summary(Diabetes1)</code></pre>
                                       </code></pre>
 </div>
 <!--radix_placeholder_article_footer-->
+<div class="article-footer">
+  <p class="social_footer">
+    <span class="disqus-comments">
+      <i class="fas fa-comments"></i>
+      &nbsp;
+      <span class="disqus-comment-count" data-disqus-identifier="posts/2018-11-06-diabetes-among-the-pima-indians-an-exploratory-analysis/">Comment on this article</span>
+    </span>
+    <span class="article-sharing">
+      Share: &nbsp;
+      <a href="https://twitter.com/share?text=Diabetes%20Among%20The%20Pima%20Indians%3A%20An%20Exploratory%20Analysis&amp;url=https%3A%2F%2Faslm123.github.io%2Feasydsrp%2Fposts%2F2018-11-06-diabetes-among-the-pima-indians-an-exploratory-analysis%2F">
+        <i class="fab fa-twitter"></i>
+      </a>
+      <a href="https://www.linkedin.com/shareArticle?mini=true&amp;url=https%3A%2F%2Faslm123.github.io%2Feasydsrp%2Fposts%2F2018-11-06-diabetes-among-the-pima-indians-an-exploratory-analysis%2F&amp;title=Diabetes%20Among%20The%20Pima%20Indians%3A%20An%20Exploratory%20Analysis">
+        <i class="fab fa-linkedin"></i>
+      </a>
+      <a href="https://www.facebook.com/sharer/sharer.php?s=100&amp;p[url]=https%3A%2F%2Faslm123.github.io%2Feasydsrp%2Fposts%2F2018-11-06-diabetes-among-the-pima-indians-an-exploratory-analysis%2F">
+        <i class="fab fa-facebook"></i>
+      </a>
+    </span>
+  </p>
+  <script id="dsq-count-scr" src="https://easy-ds-r-python.disqus.com/count.js" async></script>
+  <div id="disqus_thread" class="hidden"></div>
+  <script>
+var disqus_config = function () {
+  this.page.url = 'https://aslm123.github.io/easydsrp/posts/2018-11-06-diabetes-among-the-pima-indians-an-exploratory-analysis/';
+  this.page.identifier = 'posts/2018-11-06-diabetes-among-the-pima-indians-an-exploratory-analysis/';
+};
+(function() {
+  var d = document, s = d.createElement('script');
+  s.src = 'https://easy-ds-r-python.disqus.com/embed.js';
+  s.setAttribute('data-timestamp', +new Date());
+  (d.head || d.body).appendChild(s);
+})();
+</script>
+</div>
 <!--/radix_placeholder_article_footer-->
 </div>
 
@@ -1904,7 +1954,18 @@ summary(Diabetes1)</code></pre>
 <!--radix_placeholder_site_after_body-->
 <!--/radix_placeholder_site_after_body-->
 <!--radix_placeholder_appendices-->
-<div class="appendix-bottom"></div>
+<div class="appendix-bottom">
+  <h3 id="citation">Citation</h3>
+  <p>For attribution, please cite this work as</p>
+  <pre class="citation-appendix short">Mendis (2018, Nov. 6). Easy Data Science with R and Python: Diabetes Among The Pima Indians: An Exploratory Analysis. Retrieved from https://aslm123.github.io/easydsrp/posts/2018-11-06-diabetes-among-the-pima-indians-an-exploratory-analysis/</pre>
+  <p>BibTeX citation</p>
+  <pre class="citation-appendix long">@misc{mendis2018diabetes,
+  author = {Mendis, Asel},
+  title = {Easy Data Science with R and Python: Diabetes Among The Pima Indians: An Exploratory Analysis},
+  url = {https://aslm123.github.io/easydsrp/posts/2018-11-06-diabetes-among-the-pima-indians-an-exploratory-analysis/},
+  year = {2018}
+}</pre>
+</div>
 <!--/radix_placeholder_appendices-->
 <!--radix_placeholder_navigation_after_body-->
 <!--/radix_placeholder_navigation_after_body-->
