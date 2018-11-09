@@ -13,6 +13,8 @@ output:
 categories:
   - Data Cleaning
   - R 
+repository_url: https://github.com/aslm123/easydsrp
+creative_commons: CC BY
 ---
 
 ```{r setup, include=FALSE}
@@ -22,15 +24,39 @@ knitr::opts_chunk$set(echo = TRUE)
 # Data
 
 The data used in the current project contains a number of diagnostic measures of type 2 diabetes in women of the Pima Indian heritage, and whether or not the individual has type 2 diabetes. The dataset was obtained from Kaggle at (https://www.kaggle.com/uciml/pima-indians-diabetes-database). There is a total of 768 observations and 9 variables. The variables in the dataset are:
--	Pregnancies. Number of pregnancies. 
--	Glucose. The blood plasma glucose concentration after a 2 hour oral glucose tolerance test.
--	BloodPressure. Diastolic blood pressure (mm/HG).
--	SkinThickness. Skinfold thickness of the triceps (mm).
--	Insulin. 2 hour serum insulin (mu U/ml).
--	BMI. Body mass index (kg/m squared)
--	DiabetesPedigreeFunction. A function that determines the risk of type 2 diabetes based on family history, the larger the function, the higher the risk of type 2 diabetes.
--	Age. Age (years).
--	Outcome. Whether the person is diagnosed with type 2 diabetes (1 = yes, 0 = no).
+
+  *	Pregnancies
+    - Number of pregnancies. 
+  
+  *	Glucose
+    - The blood plasma glucose concentration after a 2 hour oral glucose tolerance test.
+  
+  *	BloodPressure
+    - Diastolic blood pressure (mm/HG).
+  
+  
+  *	SkinThickness
+    - Skinfold thickness of the triceps (mm).
+  
+  
+  *	Insulin
+    - 2 hour serum insulin (mu U/ml).
+  
+  
+  *	BMI
+    - Body mass index (kg/m squared)
+  
+  
+  *	DiabetesPedigreeFunction
+    - A function that determines the risk of type 2 diabetes based on family history, the larger the function, the higher the risk of type 2 diabetes.
+  
+  
+  *	Age. 
+    - Age (years)
+  
+  
+  *	Outcome
+    - Whether the person is diagnosed with type 2 diabetes (1 = yes, 0 = no).
 
 ## Preprocessing
 ```{r Libraries, message=FALSE}
@@ -39,14 +65,12 @@ library(tidyverse)
 library(dplyr)
 library(tidyr)
 library(knitr)
-library()
 ```
 
 ```{r Working_Directory, message=FALSE, echo=FALSE, include=FALSE}
 Diabetes <- read_csv("C:/Users/aselr/Documents/RMIT/SEMESTER 2 2018/Analysis of Categorical Data/Final Project/Phase 1/diabetes.csv") %>% 
   as.data.frame()
 ```
-The reason to add `as.data.frame()` is that sometimes the data will be read into a list format but we want it in a data frame format for this project.
 
 
 ## Overview
@@ -74,7 +98,7 @@ summary(Diabetes$Outcome)
 ```
 We can see that there are almost twice as many people wihtout diabetes than there are with diabetes. While there is no universal cutoff for the number of rows for your target variable, this should suffice. 
 
-*We just need to make sure that there is enough data for your model to learn how to differentiate between the two*
+*We just need to make sure that there is enough data for your model to learn how to differentiate between the two.*
 
 ### Numeric
 
@@ -90,7 +114,7 @@ The following variables:
 
 	* BMI 
 
-need to be converted into numeric variables from its current integer class. These variables have decimal values and its absecnce could potentially create misleading results and distort specified ranges of risk represented by those medical tests.
+need to be converted into numeric variables from its current integer class. These variables have decimal values and its absence could potentially create misleading results and distort specified ranges of risk represented by those medical tests.
 
 ```{r}
 Diabetes$Glucose <-  as.numeric(Diabetes$Glucose)
@@ -113,7 +137,7 @@ Row = sum(rowSums(Diabetes==0))
 ```
 
 A value of '0' does not necessarily mean it is a missing value. For example:
-A woman has a zero record of pregancies because that woman has not been pregnant. 
+*A woman has a zero record of pregancies because that woman has not been pregnant.*
 
 This is one example on how careful you have to be when preprocessig your data for missing values. Zero does not mean it is missing. However in additon to that point, zero values could create problems when passing it to a machine learning model. Techniques like Regression can give you an estimate of the output when the variable is zero. Anotther method of dealing with zeros could be to bin the variable which will then create a categorical variable.
 
@@ -264,10 +288,11 @@ load('C:/Users/aselr/Documents/R Programming/mode.rda') # Function to calculate 
 ```
 
 # Visualisation of variables 
+# Numeric Variables
 
-## Numeric Variables {.tabset .tabset-fade}
+# {.tabset .tabset-fade}
 
-### Pregnancies
+## Pregnancies
 ```{r}
 ggplot(Diabetes1, aes(y=Pregnancies, x=Outcome)) + 
       geom_boxplot() + 
@@ -276,7 +301,7 @@ ggplot(Diabetes1, aes(y=Pregnancies, x=Outcome)) +
                   geom="point", shape=16, size=5)
 ```
 
-### Age
+## Age
 ```{r}
 ggplot(Diabetes1, aes(y=Age, x=Outcome)) + 
       geom_boxplot() + 
@@ -285,7 +310,7 @@ ggplot(Diabetes1, aes(y=Age, x=Outcome)) +
                   geom="point", shape=16, size=5)
 ```
 
-### Skin Thickness
+## Skin Thickness
 ```{r}
 ggplot(Diabetes1, aes(y=SkinThickness, x=Outcome)) + 
       geom_boxplot() + 
@@ -294,7 +319,7 @@ ggplot(Diabetes1, aes(y=SkinThickness, x=Outcome)) +
                   geom="point", shape=16, size=5)
 ```
 
-### Diabetes Pedigree Function
+## Diabetes Pedigree Function
 ```{r}
 ggplot(Diabetes1, aes(y=DiabetesPedigreeFunction, x=Outcome)) + 
       geom_boxplot() + 
@@ -306,9 +331,9 @@ ggplot(Diabetes1, aes(y=DiabetesPedigreeFunction, x=Outcome)) +
 
 
 
-## Categorical Variables (% of Outcome) {.tabset .tabset-fade}
-
-### Obesity
+# Categorical Variables (% of Outcome) 
+# {.tabset .tabset-fade}
+## Obesity
 ```{r}
 obesity <- table(Diabetes1$Obesity, Diabetes1$Outcome,
                           dnn = c("Obesity", "Outcome")) %>% 
@@ -317,7 +342,7 @@ obesity %>% round(2) %>%
   kable(format = 'html')
 ```
 
-### Glucose
+## Glucose
 ```{r}
 glucose <- table(Diabetes1$`Glucose(mmol/l)`, Diabetes1$Outcome,
                           dnn = c("Glucose Level", "Outcome")) %>% 
