@@ -1,7 +1,7 @@
 ---
 title: "Diabetes Among The Pima Indians: An Exploratory Analysis"
 description: |
-  In this post we will explore the Pima Idian datset from the UCI repository. This post will aim to showcase different ways of thinking of your 
+  In this post we will explore the Pima Indian dataset from the UCI repository. This post will aim to showcase different ways of thinking of your 
   data. Most novices to data science would rush into data preprocessing and not explore the data properly. The data cleaning stage can be subjective 
   at times and here I offer my own view and opinons on this dataset
 author:
@@ -11,7 +11,8 @@ output:
   radix::radix_article:
     self_contained: false
 categories:
-  - Data Cleaning
+  - Data Preprocessing
+  - Exploratory Analysis
   - R 
 repository_url: https://github.com/aslm123/easydsrp
 creative_commons: CC BY
@@ -65,6 +66,7 @@ library(tidyverse)
 library(dplyr)
 library(tidyr)
 library(knitr)
+library(pipeR)
 ```
 
 ```{r Working_Directory, message=FALSE, echo=FALSE, include=FALSE}
@@ -264,16 +266,16 @@ In this dataset, only the diastolic blood Pressure is reported. This requires us
 
 As reported by the Centers for Disease Control and Prevention, blood pressure is measured using systolic and diastolic units. When they are reported we can make the following inferences:
 
- * Normal
+  * Normal
   	- Systolic <120mmHg,
   	- Diastolic <80mmHg   
 
- * Prehypertension 
- 	 - Systolic >=120mmHg - <=139mmHg
-  	 - Diastolic >=80 - <=89mmHg 
+  * Prehypertension 
+    - Systolic >=120mmHg - <=139mmHg
+    - Diastolic >=80 - <=89mmHg 
 
- * High 
- 	- Systolic: >=140mmHg
+  * High 
+ 	  - Systolic: >=140mmHg
   	- Diastolic: >=90mmHg 
 
 BECAUSE SYSTOLIC PRESSURE IS NOT REPORTED, I DO NOT FEEL COMFORTABLE IN PROCEEDING WITH THIS VARIBALE. THIS IS A SUBJECTIVE DECISION OF MINE.
@@ -287,53 +289,189 @@ Diabetes1$BloodPressure <- NULL
 load('C:/Users/aselr/Documents/R Programming/mode.rda') # Function to calculate mode
 ```
 
+```{r}
+str(mode)
+```
+
 # Visualisation of variables 
-# Numeric Variables
 
-# {.tabset .tabset-fade}
+## Numeric Variables
 
-## Pregnancies
+### Pregnancies
 ```{r}
 ggplot(Diabetes1, aes(y=Pregnancies, x=Outcome)) + 
-      geom_boxplot() + 
-      xlab("Frequency") + ylab("Pregnancies") +
-      stat_summary(fun.y=mode, colour="darkred", 
-                  geom="point", shape=16, size=5)
+      geom_boxplot() + geom_jitter()+
+      theme_bw() +
+      xlab("Outcome") + ylab("Pregnancies") +
+      stat_summary(fun.y=mode, colour="orange", 
+                  geom="point", shape=16, size=5) +
+      stat_summary(fun.y=mean, colour="purple", 
+                  geom="point", shape=16, size=5) +
+      ggtitle(label="Number of Pregancies by Outcome",
+              subtitle = "Orange=Most Frequent\nPurple=Average Number of Pregnancies") +
+      theme(axis.text.x = element_text(face="bold",size=12),
+            axis.text.y = element_text(face="bold",size=12),
+            title = element_text(face="bold",size=12),
+            
+            axis.title = element_text(face="bold",size=12)) +
+      scale_y_continuous(breaks=seq(0,20,2))
+      
 ```
 
-## Age
+We can see that there is a lot of noise in the number of pregancies and there is significant overlap between those who have and do not have diabetes. 
+Reagardless of the distribution of the data, the most number of pregnancies a woman had was only 1 and the average number of pregnancies per woman was 5 for those with Diabetes and 3 for those without.
+
+
+
+### Age
 ```{r}
 ggplot(Diabetes1, aes(y=Age, x=Outcome)) + 
-      geom_boxplot() + 
-      xlab("Frequency") + ylab("Age") +
-      stat_summary(fun.y=mode, colour="darkred", 
-                  geom="point", shape=16, size=5)
+      geom_boxplot() + geom_jitter()+
+      theme_bw() +
+      xlab("Outcome") + ylab("Age") +
+      stat_summary(fun.y=mode, colour="Orange", 
+                  geom="point", shape=16, size=5) +
+      stat_summary(fun.y=mean, colour="purple", 
+                  geom="point", shape=16, size=5) +
+      ggtitle(label="Age by Outcome",
+              subtitle = "Orange=Most Frequent\nPurple=Average Age") +
+      theme(axis.text.x = element_text(face="bold",size=12),
+            axis.text.y = element_text(face="bold",size=12),
+            title = element_text(face="bold",size=12),
+            
+            axis.title = element_text(face="bold",size=12)) +
+      scale_y_continuous(breaks=seq(20,64,4))
 ```
 
-## Skin Thickness
+It appears that most of the women lie between the ages of 20 and 64. Only two women have a recorded age above 80. These two outliers can cause trouble since it appears that the women who have diabetes tend to be older. 
+
+```{r}
+Diabetes1 <- filter(Diabetes1, Age<80)
+```
+
+
+```{r fig.height=5}
+ggplot(Diabetes1, aes(y=Age, x=Outcome)) + 
+      geom_boxplot() + geom_jitter()+
+      theme_bw() +
+      xlab("Outcome") + ylab("Age") +
+      stat_summary(fun.y=mode, colour="Orange", 
+                  geom="point", shape=16, size=5) +
+      stat_summary(fun.y=mean, colour="purple", 
+                  geom="point", shape=16, size=5) +
+      ggtitle(label="Age by Outcome",
+              subtitle = "Orange=Most Frequent\nPurple=Average Age") +
+      theme(axis.text.x = element_text(face="bold",size=12),
+            axis.text.y = element_text(face="bold",size=12),
+            title = element_text(face="bold",size=12),
+            
+            axis.title = element_text(face="bold",size=12)) +
+      scale_y_continuous(breaks=seq(20,80,4))
+```
+
+After removing outliers, the statistics have not appeared to have changed. Although there is significant overlap, women with diabetes tend to be older than those who dont have diabetes. This could be due to changes in their socio-physical life in terms of diet and exercise. It is common knowledge that with age, the body tends to get weaker and humans become less physically active.
+
+
+### Skin Thickness
 ```{r}
 ggplot(Diabetes1, aes(y=SkinThickness, x=Outcome)) + 
-      geom_boxplot() + 
-      xlab("Frequency") + ylab("SkinThickness") +
-      stat_summary(fun.y=mode, colour="darkred", 
-                  geom="point", shape=16, size=5)
+      geom_boxplot() + geom_jitter()+
+      theme_bw() +
+      xlab("Outcome") + ylab("SkinThickness") +
+      stat_summary(fun.y=mode, colour="orange", 
+                  geom="point", shape=16, size=5) +
+      stat_summary(fun.y=mean, colour="purple", 
+                  geom="point", shape=16, size=5) +
+      ggtitle(label="Skin Thickness by Outcome",
+              subtitle = "Orange=Most Frequent\nPurple=Average Age") +
+      theme(axis.text.x = element_text(face="bold",size=12),
+            axis.text.y = element_text(face="bold",size=12),
+            title = element_text(face="bold",size=12),
+            axis.title = element_text(face="bold",size=12)) +
+      scale_y_continuous(breaks=seq(4,56,4))
 ```
 
-## Diabetes Pedigree Function
+Women with Diabetes have a higher skin fold thickness than women without diabetes. The `Positive` Outcome distribution appears to be normally distributed since the mode, mean and median are approximately the same. 
+
+### Diabetes Pedigree Function
 ```{r}
 ggplot(Diabetes1, aes(y=DiabetesPedigreeFunction, x=Outcome)) + 
-      geom_boxplot() + 
-      xlab("Frequency") + ylab("DiabetesPedigreeFunction") +
-      stat_summary(fun.y=mode, colour="darkred", 
-                  geom="point", shape=16, size=5)
+      geom_boxplot() + geom_jitter()+
+      theme_bw() +
+      xlab("Outcome") + ylab("DiabetesPedigreeFunction") +
+      stat_summary(fun.y=mode, colour="orange", 
+                  geom="point", shape=16, size=5) +
+      stat_summary(fun.y=mean, colour="purple", 
+                  geom="point", shape=16, size=5) +
+      ggtitle(label="Diabetes Pedigree Function by Outcome",
+              subtitle = "Orange=Most Frequent\nPurple=Average Age") +
+      theme(axis.text.x = element_text(face="bold",size=12),
+            axis.text.y = element_text(face="bold",size=12),
+            title = element_text(face="bold",size=12),
+            axis.title = element_text(face="bold",size=12)) +
+      scale_y_continuous(breaks=seq(0,3,0.5))
+```
+
+Interestingly, the `Diabetes Pedigree Function` does not seem to give a clear picture of a diabetic outcome. 
+
+### Insulin
+```{r}
+ggplot(Diabetes1, aes(y=Insulin, x=Outcome)) + 
+      geom_boxplot() + geom_jitter()+
+      theme_bw() +
+      xlab("Outcome") + ylab("Insulin") +
+      stat_summary(fun.y=mode, colour="orange", 
+                  geom="point", shape=16, size=5) +
+      stat_summary(fun.y=mean, colour="purple", 
+                  geom="point", shape=16, size=5) +
+      ggtitle(label="Insulin by Outcome",
+              subtitle = "Orange=Most Frequent\nPurple=Average Age") +
+      theme(axis.text.x = element_text(face="bold",size=12),
+            axis.text.y = element_text(face="bold",size=12),
+            title = element_text(face="bold",size=12),
+            axis.title = element_text(face="bold",size=12)) +
+      scale_y_continuous(breaks=seq(0,900,50))
+```
+
+This variable is very tricky:
+
+  1. I cannot seem to find any conclusive evidence of acceptable levels of insulin. But this test is also related to the glucose tolerance test as seen above.
+  2. The unit of measurement does not seem to be easily found on the internet.
+  3. The range is **HUGE** which is an understatement. 
+  
+The values above 650 will be removed to avoid any misleading results. 
+
+```{r}
+Diabetes1 <- filter(Diabetes1, Insulin<650)
 ```
 
 
+```{r}
+ggplot(Diabetes1, aes(y=Insulin, x=Outcome)) + 
+      geom_boxplot() + geom_jitter()+
+      theme_bw() +
+      xlab("Outcome") + ylab("Insulin") +
+      stat_summary(fun.y=mode, colour="orange", 
+                  geom="point", shape=16, size=5) +
+      stat_summary(fun.y=mean, colour="purple", 
+                  geom="point", shape=16, size=5) +
+      ggtitle(label="Insulin by Outcome",
+              subtitle = "Orange=Most Frequent\nPurple=Average Age") +
+      theme(axis.text.x = element_text(face="bold",size=12),
+            axis.text.y = element_text(face="bold",size=12),
+            title = element_text(face="bold",size=12),
+            axis.title = element_text(face="bold",size=12)) +
+      scale_y_continuous(breaks=seq(0,650,50))
+```
 
+Because I cannot come to a consensus on how to bin `Insulin`, I will keep it as a numeric variable.
 
-# Categorical Variables (% of Outcome) 
-# {.tabset .tabset-fade}
-## Obesity
+## Note
+**During the visulization, as I have done more preprocessing, there is a chance that the statistics for some of the variables will have changed.**
+
+## Categorical Variables (% of Outcome) 
+
+### Obesity
 ```{r}
 obesity <- table(Diabetes1$Obesity, Diabetes1$Outcome,
                           dnn = c("Obesity", "Outcome")) %>% 
@@ -342,7 +480,11 @@ obesity %>% round(2) %>%
   kable(format = 'html')
 ```
 
-## Glucose
+Unsurprisingly, 82% of Diabetic women were obese while 16% were overweight. Only 2% were reported to be of normal weight.
+
+Among the women that do not have diabetes, 55% were obese, 27% overweight and 18% normal. The distinction is not as clear for those with diabetes but 82% of women without diabetes were reportedly overweight and obese.
+
+### Glucose
 ```{r}
 glucose <- table(Diabetes1$`Glucose(mmol/l)`, Diabetes1$Outcome,
                           dnn = c("Glucose Level", "Outcome")) %>% 
@@ -350,6 +492,10 @@ glucose <- table(Diabetes1$`Glucose(mmol/l)`, Diabetes1$Outcome,
 glucose %>% round(2) %>% 
   kable(format = 'html')
 ```
+
+55% of women who has diabetes were positive for Hyperglycemia and 45% had normal glucose levels. Surprisingly, the glucose levels do not seem to clearly differentiate between those who are diabtic. Obviously, people with Hyperglycemia are more likely to have diabetes but the magnitude is very low according to the above table.
+
+Now unsurprisingly, 86% of those who do not have diabetes also report to have normal glucose levels. Only 14% report Hyperglycemia.
 
 # Final Data
 
@@ -366,6 +512,9 @@ I have already binned these two variables and are not needed further. However, s
 ```{r}
 summary(Diabetes1)
 ```
+
+
+
 
 
 
