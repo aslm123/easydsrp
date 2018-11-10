@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/" version="2.0">
+  <channel>
+    <title>Easy Data Science with R and Python</title>
+    <link>https://aslm123.github.io/easydsrp/</link>
+    <atom:link href="https://aslm123.github.io/easydsrp/index.xml" rel="self" type="application/rss+xml"/>
+    <description>Using R and Python to tackle Data Science Problems one at a time. R and Python
+are the titans of Data Science. The Statistical Computing environement provided
+by R and the general purpose nature coupled with easily readable syntax of Python
+make them a formiddable duo. I have been wanting to explore these two languages in the 
+data science doomain and this is how I would like to share my knowledge with the world.
+</description>
+    <generator>Radix</generator>
+    <lastBuildDate>Tue, 06 Nov 2018 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>Diabetes Among The Pima Indians: An Exploratory Analysis</title>
+      <dc:creator>Asel Mendis</dc:creator>
+      <link>https://aslm123.github.io/easydsrp/posts/2018-11-06-diabetes-among-the-pima-indians-an-exploratory-analysis</link>
+      <description>In this post we will explore the Pima Idian datset from the UCI repository. This post will aim to showcase different ways of thinking of your 
+data. Most novices to data science would rush into data preprocessing and not explore the data properly. The data cleaning stage can be subjective 
+at times and here I offer my own view and opinons on this dataset</description>
+      <guid>https://aslm123.github.io/easydsrp/posts/2018-11-06-diabetes-among-the-pima-indians-an-exploratory-analysis</guid>
+      <pubDate>Tue, 06 Nov 2018 00:00:00 +0000</pubDate>
+      <media:content url="https://aslm123.github.io/easydsrp/posts/2018-11-06-diabetes-among-the-pima-indians-an-exploratory-analysis/diabetes-among-the-pima-indians-an-exploratory-analysis_files/figure-html5/unnamed-chunk-15-1.png" medium="image" type="image/png" width="1248" height="768"/>
+    </item>
+  </channel>
+</rss>

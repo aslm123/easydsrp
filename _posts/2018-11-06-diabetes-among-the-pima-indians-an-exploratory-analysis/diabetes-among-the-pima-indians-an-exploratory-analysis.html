@@ -23,6 +23,7 @@
   
   <meta property="description" itemprop="description" content="In this post we will explore the Pima Idian datset from the UCI repository. This post will aim to showcase different ways of thinking of your &#10;data. Most novices to data science would rush into data preprocessing and not explore the data properly. The data cleaning stage can be subjective &#10;at times and here I offer my own view and opinons on this dataset"/>
   
+  <link rel="license" href="https://creativecommons.org/licenses/by/4.0/"/>
   
   <!--  https://schema.org/Article -->
   <meta property="article:published" itemprop="datePublished" content="2018-11-06"/>
@@ -44,7 +45,7 @@
   <!--radix_placeholder_rmarkdown_metadata-->
   
   <script type="text/json" id="radix-rmarkdown-metadata">
-  {"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["title","description","author","date","output"]}},"value":[{"type":"character","attributes":{},"value":["Diabetes Among The Pima Indians: An Exploratory Analysis"]},{"type":"character","attributes":{},"value":["In this post we will explore the Pima Idian datset from the UCI repository. This post will aim to showcase different ways of thinking of your \ndata. Most novices to data science would rush into data preprocessing and not explore the data properly. The data cleaning stage can be subjective \nat times and here I offer my own view and opinons on this dataset\n"]},{"type":"list","attributes":{},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name"]}},"value":[{"type":"character","attributes":{},"value":["Asel Mendis"]}]}]},{"type":"character","attributes":{},"value":["11-06-2018"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["radix::radix_article"]}},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["self_contained"]}},"value":[{"type":"logical","attributes":{},"value":[false]}]}]}]}
+  {"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["title","description","author","date","output","categories","repository_url","creative_commons"]}},"value":[{"type":"character","attributes":{},"value":["Diabetes Among The Pima Indians: An Exploratory Analysis"]},{"type":"character","attributes":{},"value":["In this post we will explore the Pima Idian datset from the UCI repository. This post will aim to showcase different ways of thinking of your \ndata. Most novices to data science would rush into data preprocessing and not explore the data properly. The data cleaning stage can be subjective \nat times and here I offer my own view and opinons on this dataset\n"]},{"type":"list","attributes":{},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name"]}},"value":[{"type":"character","attributes":{},"value":["Asel Mendis"]}]}]},{"type":"character","attributes":{},"value":["11-06-2018"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["radix::radix_article"]}},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["self_contained"]}},"value":[{"type":"logical","attributes":{},"value":[false]}]}]},{"type":"character","attributes":{},"value":["Data Cleaning","R"]},{"type":"character","attributes":{},"value":["https://github.com/aslm123/easydsrp"]},{"type":"character","attributes":{},"value":["CC BY"]}]}
   </script>
   <!--/radix_placeholder_rmarkdown_metadata-->
   
@@ -955,7 +956,45 @@
 
 <div class="d-article">
 <h1 id="data">Data</h1>
-<p>The data used in the current project contains a number of diagnostic measures of type 2 diabetes in women of the Pima Indian heritage, and whether or not the individual has type 2 diabetes. The dataset was obtained from Kaggle at (<a href="https://www.kaggle.com/uciml/pima-indians-diabetes-database" class="uri">https://www.kaggle.com/uciml/pima-indians-diabetes-database</a>). There is a total of 768 observations and 9 variables. The variables in the dataset are: - Pregnancies. Number of pregnancies. - Glucose. The blood plasma glucose concentration after a 2 hour oral glucose tolerance test. - BloodPressure. Diastolic blood pressure (mm/HG). - SkinThickness. Skinfold thickness of the triceps (mm). - Insulin. 2 hour serum insulin (mu U/ml). - BMI. Body mass index (kg/m squared) - DiabetesPedigreeFunction. A function that determines the risk of type 2 diabetes based on family history, the larger the function, the higher the risk of type 2 diabetes. - Age. Age (years). - Outcome. Whether the person is diagnosed with type 2 diabetes (1 = yes, 0 = no).</p>
+<p>The data used in the current project contains a number of diagnostic measures of type 2 diabetes in women of the Pima Indian heritage, and whether or not the individual has type 2 diabetes. The dataset was obtained from Kaggle at (<a href="https://www.kaggle.com/uciml/pima-indians-diabetes-database" class="uri">https://www.kaggle.com/uciml/pima-indians-diabetes-database</a>). There is a total of 768 observations and 9 variables. The variables in the dataset are:</p>
+<ul>
+<li>Pregnancies
+<ul>
+<li>Number of pregnancies.</li>
+</ul></li>
+<li>Glucose
+<ul>
+<li>The blood plasma glucose concentration after a 2 hour oral glucose tolerance test.</li>
+</ul></li>
+<li>BloodPressure
+<ul>
+<li>Diastolic blood pressure (mm/HG).</li>
+</ul></li>
+<li>SkinThickness
+<ul>
+<li>Skinfold thickness of the triceps (mm).</li>
+</ul></li>
+<li>Insulin
+<ul>
+<li>2 hour serum insulin (mu U/ml).</li>
+</ul></li>
+<li>BMI
+<ul>
+<li>Body mass index (kg/m squared)</li>
+</ul></li>
+<li>DiabetesPedigreeFunction
+<ul>
+<li>A function that determines the risk of type 2 diabetes based on family history, the larger the function, the higher the risk of type 2 diabetes.</li>
+</ul></li>
+<li>Age.
+<ul>
+<li>Age (years)</li>
+</ul></li>
+<li>Outcome
+<ul>
+<li>Whether the person is diagnosed with type 2 diabetes (1 = yes, 0 = no).</li>
+</ul></li>
+</ul>
 <h2 id="preprocessing">Preprocessing</h2>
 <div class="layout-chunk" data-layout="l-body">
 <pre class="r"><code>
@@ -963,10 +1002,8 @@ library(readr)
 library(tidyverse)
 library(dplyr)
 library(tidyr)
-library(knitr)
-library()</code></pre>
+library(knitr)</code></pre>
 </div>
-<p>The reason to add <code>as.data.frame()</code> is that sometimes the data will be read into a list format but we want it in a data frame format for this project.</p>
 <h2 id="overview">Overview</h2>
 <div class="layout-chunk" data-layout="l-body">
 <pre class="r"><code>
@@ -1130,7 +1167,7 @@ Positive Negative
      268      500 </code></pre>
 </div>
 <p>We can see that there are almost twice as many people wihtout diabetes than there are with diabetes. While there is no universal cutoff for the number of rows for your target variable, this should suffice.</p>
-<p><em>We just need to make sure that there is enough data for your model to learn how to differentiate between the two</em></p>
+<p><em>We just need to make sure that there is enough data for your model to learn how to differentiate between the two.</em></p>
 <h3 id="numeric">Numeric</h3>
 <p>The following variables:</p>
 <pre><code>
@@ -1143,7 +1180,7 @@ Positive Negative
 * Insulin
 
 * BMI </code></pre>
-<p>need to be converted into numeric variables from its current integer class. These variables have decimal values and its absecnce could potentially create misleading results and distort specified ranges of risk represented by those medical tests.</p>
+<p>need to be converted into numeric variables from its current integer class. These variables have decimal values and its absence could potentially create misleading results and distort specified ranges of risk represented by those medical tests.</p>
 <div class="layout-chunk" data-layout="l-body">
 <pre class="r"><code>
 Diabetes$Glucose &lt;-  as.numeric(Diabetes$Glucose)
@@ -1177,7 +1214,7 @@ DiabetesPedigreeFunction                      Age
 $Row
 [1] 763</code></pre>
 </div>
-<p>A value of ‘0’ does not necessarily mean it is a missing value. For example: A woman has a zero record of pregancies because that woman has not been pregnant.</p>
+<p>A value of ‘0’ does not necessarily mean it is a missing value. For example: <em>A woman has a zero record of pregancies because that woman has not been pregnant.</em></p>
 <p>This is one example on how careful you have to be when preprocessig your data for missing values. Zero does not mean it is missing. However in additon to that point, zero values could create problems when passing it to a machine learning model. Techniques like Regression can give you an estimate of the output when the variable is zero. Anotther method of dealing with zeros could be to bin the variable which will then create a categorical variable.</p>
 <div class="layout-chunk" data-layout="l-body">
 <pre class="r"><code>
@@ -1351,8 +1388,9 @@ Diabetes1$BloodPressure &lt;- NULL</code></pre>
 
 </div>
 <h1 id="visualisation-of-variables">Visualisation of variables</h1>
-<h2 id="numeric-variables" class="tabset tabset-fade">Numeric Variables</h2>
-<h3 id="pregnancies">Pregnancies</h3>
+<h1 id="numeric-variables">Numeric Variables</h1>
+<h1 id="section" class="tabset tabset-fade"></h1>
+<h2 id="pregnancies">Pregnancies</h2>
 <div class="layout-chunk" data-layout="l-body">
 <pre class="r"><code>
 ggplot(Diabetes1, aes(y=Pregnancies, x=Outcome)) + 
@@ -1362,7 +1400,7 @@ ggplot(Diabetes1, aes(y=Pregnancies, x=Outcome)) +
                   geom=&quot;point&quot;, shape=16, size=5)</code></pre>
 <p><img src="diabetes-among-the-pima-indians-an-exploratory-analysis_files/figure-html5/unnamed-chunk-15-1.png" width="624" /></p>
 </div>
-<h3 id="age">Age</h3>
+<h2 id="age">Age</h2>
 <div class="layout-chunk" data-layout="l-body">
 <pre class="r"><code>
 ggplot(Diabetes1, aes(y=Age, x=Outcome)) + 
@@ -1372,7 +1410,7 @@ ggplot(Diabetes1, aes(y=Age, x=Outcome)) +
                   geom=&quot;point&quot;, shape=16, size=5)</code></pre>
 <p><img src="diabetes-among-the-pima-indians-an-exploratory-analysis_files/figure-html5/unnamed-chunk-16-1.png" width="624" /></p>
 </div>
-<h3 id="skin-thickness">Skin Thickness</h3>
+<h2 id="skin-thickness">Skin Thickness</h2>
 <div class="layout-chunk" data-layout="l-body">
 <pre class="r"><code>
 ggplot(Diabetes1, aes(y=SkinThickness, x=Outcome)) + 
@@ -1382,7 +1420,7 @@ ggplot(Diabetes1, aes(y=SkinThickness, x=Outcome)) +
                   geom=&quot;point&quot;, shape=16, size=5)</code></pre>
 <p><img src="diabetes-among-the-pima-indians-an-exploratory-analysis_files/figure-html5/unnamed-chunk-17-1.png" width="624" /></p>
 </div>
-<h3 id="diabetes-pedigree-function">Diabetes Pedigree Function</h3>
+<h2 id="diabetes-pedigree-function">Diabetes Pedigree Function</h2>
 <div class="layout-chunk" data-layout="l-body">
 <pre class="r"><code>
 ggplot(Diabetes1, aes(y=DiabetesPedigreeFunction, x=Outcome)) + 
@@ -1392,8 +1430,9 @@ ggplot(Diabetes1, aes(y=DiabetesPedigreeFunction, x=Outcome)) +
                   geom=&quot;point&quot;, shape=16, size=5)</code></pre>
 <p><img src="diabetes-among-the-pima-indians-an-exploratory-analysis_files/figure-html5/unnamed-chunk-18-1.png" width="624" /></p>
 </div>
-<h2 id="categorical-variables-of-outcome" class="tabset tabset-fade">Categorical Variables (% of Outcome)</h2>
-<h3 id="obesity">Obesity</h3>
+<h1 id="categorical-variables-of-outcome">Categorical Variables (% of Outcome)</h1>
+<h1 id="section-1" class="tabset tabset-fade"></h1>
+<h2 id="obesity">Obesity</h2>
 <div class="layout-chunk" data-layout="l-body">
 
 <pre class="r"><code>
@@ -1452,7 +1491,7 @@ Obese
 </tbody>
 </table>
 </div>
-<h3 id="glucose-1">Glucose</h3>
+<h2 id="glucose-1">Glucose</h2>
 <div class="layout-chunk" data-layout="l-body">
 
 <pre class="r"><code>
@@ -1553,7 +1592,12 @@ summary(Diabetes1)</code></pre>
 <!--radix_placeholder_site_after_body-->
 <!--/radix_placeholder_site_after_body-->
 <!--radix_placeholder_appendices-->
-<div class="appendix-bottom"></div>
+<div class="appendix-bottom">
+<h3 id="updates-and-corrections">Corrections</h3>
+<p>If you see mistakes or want to suggest changes, please <a href="https://github.com/aslm123/easydsrp/issues/new">create an issue</a> on the source repository.</p>
+<h3 id="reuse">Reuse</h3>
+<p>Text and figures are licensed under Creative Commons Attribution <a rel="license" href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. Source code is available at <a href="https://github.com/aslm123/easydsrp">https://github.com/aslm123/easydsrp</a>, unless otherwise noted. The figures that have been reused from other sources don't fall under this license and can be recognized by a note in their caption: "Figure from ...".</p>
+</div>
 <!--/radix_placeholder_appendices-->
 <!--radix_placeholder_navigation_after_body-->
 <!--/radix_placeholder_navigation_after_body-->

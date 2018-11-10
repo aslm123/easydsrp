@@ -13,4 +13,9 @@ navbar:
       href: index.html
     - text: "About"
       href: about.html
+collections:
+  posts:
+    disqus: easy-ds-r-python
+    share: [twitter, linkedin, facebook]
+base_url: https://aslm123.github.io/easydsrp/
 output: radix::radix_article
