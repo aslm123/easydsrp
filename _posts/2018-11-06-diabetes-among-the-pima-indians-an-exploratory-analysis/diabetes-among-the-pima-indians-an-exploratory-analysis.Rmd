@@ -6,6 +6,7 @@ description: |
   at times and here I offer my own view and opinons on this dataset
 author:
   - name: Asel Mendis
+      url: {https://www.linkedin.com/in/asel-mendis-a620399b/}
 date: 11-06-2018
 output:
   radix::radix_article:

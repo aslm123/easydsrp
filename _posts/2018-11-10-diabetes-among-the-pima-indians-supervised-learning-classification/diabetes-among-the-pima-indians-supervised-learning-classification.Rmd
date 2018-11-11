@@ -1,0 +1,231 @@
+---
+title: "Diabetes Among the Pima Indians: Supervised Learning Classification"
+description: |
+  In my last post I conducted EDA on the Pima Indians dataset to get it ready for Machine Learning. My second post will explore just that. What outcome can we expect when we put it through a Classification Algorithm?
+author:
+  - name: Asel Mendis
+    url: {https://www.linkedin.com/in/asel-mendis-a620399b/}
+date: 11-10-2018
+output:
+  radix::radix_article:
+    self_contained: false
+categories:
+  - Machine Learning
+  - Classification
+  - Supervised Learning
+  - R 
+draft: true
+repository_url: https://github.com/aslm123/easydsrp
+creative_commons: CC BY
+---
+
+
+```{r echo=FALSE}
+library(readr)
+library(stringr)
+source_rmd <- function(file_path) {
+  stopifnot(is.character(file_path) && length(file_path) == 1)
+  .tmpfile <- tempfile(fileext = ".R")
+  .con <- file(.tmpfile) 
+  on.exit(close(.con))
+  full_rmd <- read_file(file_path)
+  codes <- str_match_all(string = full_rmd, pattern = "```(?s)\\{r[^{}]*\\}\\s*\\n(.*?)```")
+  stopifnot(length(codes) == 1 && ncol(codes[[1]]) == 2)
+  codes <- paste(codes[[1]][, 2], collapse = "\n")
+  writeLines(codes, .con)
+  flush(.con)
+  cat(sprintf("R code extracted to tempfile: %s\nSourcing tempfile...", .tmpfile))
+  source(.tmpfile)
+}
+source_rmd("C:/Users/aselr/Documents/GitHub/easydsrp/_posts/2018-11-06-diabetes-among-the-pima-indians-an-exploratory-analysis/diabetes-among-the-pima-indians-an-exploratory-analysis.Rmd")
+```
+
+
+```{r message=FALSE}
+library(mlr)
+library(FSelector)
+```
+
+
+```{r}
+str(Diabetes1)
+Diabetes1 <- as.data.frame(Diabetes1)
+```
+
+```{r}
+train_index <- sample(1:nrow(Diabetes1), 0.8 * nrow(Diabetes1))
+test_index <- setdiff(1:nrow(Diabetes1), train)
+
+
+train <- Diabetes1[train_index,]
+test <- Diabetes1[test_index,]
+```
+
+```{r}
+list(
+  train = summary(train),
+  test = summary(test)
+)
+
+```
+
+```{r}
+colnames(train)[8] <- "Glucose"
+colnames(test)[8] <- "Glucose"
+```
+
+
+
+```{r}
+(dt_task <- makeClassifTask(data=train, target="Outcome"))
+```
+
+
+
+```{r}
+generateFilterValuesData(dt_task, method = c("information.gain","chi.squared")) %>%
+plotFilterValues()
+
+```
+
+```{r}
+
+train <- select(train, -c(DiabetesPedigreeFunction))
+
+test <- select(test, -c(DiabetesPedigreeFunction))
+```
+
+```{r}
+(dt_task <- makeClassifTask(data=train, target="Outcome"))
+```
+
+
+```{r}
+ctrl = makeTuneControlGrid()
+rdesc = makeResampleDesc("CV", iters = 2L, stratify=TRUE)
+```
+
+
+# Decision Tree
+
+```{r}
+(dt_prob <- makeLearner("classif.rpart", predict.type = "prob"))
+```
+
+```{r}
+getParamSet("classif.rpart")
+```
+
+
+```{r}
+dt_param <- makeParamSet(
+                        makeDiscreteParam("minsplit", values=10),
+                        makeDiscreteParam("minbucket", values=round(10/3,0)),
+                        makeNumericParam("cp", lower = 0.01, upper = 0.05),
+                        makeDiscreteParam("maxcompete", values=6),
+                        makeDiscreteParam("usesurrogate", values=0),
+                        makeDiscreteParam("maxdepth", values=10))
+
+```
+
+
+
+
+```{r}
+dt_tuneparam <- tuneParams(learner=dt_prob,
+                           resampling=rdesc,
+                           measures=list(tpr,auc,f1, acc, mmce, timepredict, tnr),
+                           par.set=dt_param,
+                           control=ctrl,
+                           task=dt_task)
+
+```
+`r [Tune] Result: minsplit=10; minbucket=3; cp=0.0278; maxcompete=6; usesurrogate=0; maxdepth=10 : tpr.test.mean=0.6071429,auc.test.mean=0.7145430,f1.test.mean=0.6079365,acc.test.mean=0.7547277,mmce.test.mean=0.2452723,timepredict.test.mean=0.0000000,tnr.test.mean=0.8230159`
+
+`r [Tune] Result: minsplit=17; minbucket=7; cp=0.0433; maxcompete=4; usesurrogate=0; maxdepth=7 : tpr.test.mean=0.6904762,auc.test.mean=0.7277720,f1.test.mean=0.6156823,acc.test.mean=0.7283265,mmce.test.mean=0.2716735,timepredict.test.mean=0.0000000,tnr.test.mean=0.7460928`
+
+
+```{r}
+list(
+  `Optimal HyperParameters` = dt_tuneparam$x,
+  `Optima Metrics` = dt_tuneparam$y
+)
+```
+
+```{r}
+dtree <- setHyperPars(dt_prob, par.vals = dt_tuneparam$x)
+```
+
+
+```{r}
+dtree_train <- train(learner=dtree, task=dt_task)
+getLearnerModel(dtree_train)
+
+```
+
+
+```{r}
+(dtree_predict <- predict(dtree_train, newdata = test))
+```
+
+
+```{r}
+Performance <- performance(dtree_predict, measures = list(tpr,auc,f1, mmce, acc, timepredict, tnr)) %>% 
+  as.data.frame(row.names = c("True Positive","Area Under Curve", "F1", "Mean Misclassification Error","Accuracy","Time to Predict","True Negative Rate")) 
+
+Performance %>%  kable(caption="Performance of Decision Tree",digits = 2, format = 'html', col.names = "Result")
+```
+
+
+
+
+
+```{r}
+(dtree_threshold <-
+generateThreshVsPerfData(dtree_predict, measures = list(tpr,auc,f1, mmce, acc, timepredict, tnr)) %>%
+plotThreshVsPerf()
+)
+
+```
+
+```{r}
+mean(
+dtree_threshold$data$threshold[ which.max(dtree_threshold$data$performance[dtree_threshold$data$measure=="True negative rate"]>0.70)],
+dtree_threshold$data$threshold[ which.max(dtree_threshold$data$performance[dtree_threshold$data$measure=="True positive rate"]<=0.80)]
+)
+```
+
+
+```{r}
+DecisionTree <- dtree_predict %>%
+                    setThreshold(0.15) 
+
+DecisionTree %>% 
+  performance(measures = list(tpr,auc,f1, mmce, acc, timepredict, tnr))
+      
+```
+
+
+```{r}
+DecisionTree %>% 
+  calculateROCMeasures()
+```
+
+
+
+
+```{r}
+Performance_threshold <- performance(DecisionTree, measures = list(tpr,auc,f1, mmce, acc, timepredict, tnr)) %>% 
+  as.data.frame(row.names = c("True Positive","Area Under Curve", "F1", "Mean Misclassification Error","Accuracy","Time to Predict","True Negative Rate")) 
+
+Performance_threshold %>%  kable(caption="Performance of Decision Tree\n\n(After Thresholding to 15%)",digits = 2, format = 'html', col.names = 'RESULT')
+```
+
+
+
+# 
+
+
+
+
+
