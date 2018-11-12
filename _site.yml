@@ -15,9 +15,12 @@ navbar:
       href: about.html
     - icon: fa fa-rss
       href: index.xml
+  left: 
+    - icon: fab fa-github
+      href: https://github.com/aslm123/easydsrp
 collections:
   posts:
-    disqus: easy-ds-r-python
+    disqus: https-aslm123-github-io-easydsrp
     share: [twitter, linkedin, facebook]
     feed_item_max: false
 base_url: https://aslm123.github.io/easydsrp/
