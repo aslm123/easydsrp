@@ -1,12 +1,12 @@
 ---
-title: "Diabetes Among The Pima Indians: An Exploratory Analysis"
+title: "R: Diabetes Among The Pima Indians: An Exploratory Analysis"
 description: |
   In this post we will explore the Pima Indian dataset from the UCI repository. This post will aim to showcase different ways of thinking of your 
   data. Most novices to data science would rush into data preprocessing and not explore the data properly. The data cleaning stage can be subjective 
   at times and here I offer my own view and opinons on this dataset
 author:
   - name: Asel Mendis
-      url: {https://www.linkedin.com/in/asel-mendis-a620399b/}
+    url: https://www.linkedin.com/in/asel-mendis-a620399b/
 date: 11-06-2018
 output:
   radix::radix_article:

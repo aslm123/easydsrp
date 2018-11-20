@@ -1,10 +1,10 @@
 ---
-title: "Diabetes Among the Pima Indians: Supervised Learning Classification"
+title: "R: Diabetes Among the Pima Indians: Decision Tree Classification"
 description: |
-  In my last post I conducted EDA on the Pima Indians dataset to get it ready for Machine Learning. My second post will explore just that. What outcome can we expect when we put it through a Classification Algorithm?
+  In my last post I conducted EDA on the Pima Indians dataset to get it ready for a suite of Machine Learning techniques. My second post will explore just that. Taking one step at a time, my incoming posts will include one Machine Learning technique showing an indepth (as indepth as I can get) look at how to conduct each technique. Lets start with Decision Trees!
 author:
-  - name: Asel Mendis
-    url: {https://www.linkedin.com/in/asel-mendis-a620399b/}
+  - name: "Asel Mendis"
+    url: https://www.linkedin.com/in/asel-mendis-a620399b
 date: 11-10-2018
 output:
   radix::radix_article:
@@ -12,6 +12,7 @@ output:
 categories:
   - Machine Learning
   - Classification
+  - Decision Tree
   - Supervised Learning
   - R 
 draft: true
@@ -40,6 +41,11 @@ source_rmd <- function(file_path) {
 source_rmd("C:/Users/aselr/Documents/GitHub/easydsrp/_posts/2018-11-06-diabetes-among-the-pima-indians-an-exploratory-analysis/diabetes-among-the-pima-indians-an-exploratory-analysis.Rmd")
 ```
 
+I personally like to use [`mlr`](https://mlr.mlr-org.com/index.html) to conduct my machine learning tasks but you could just as well use any other library to your liking.
+
+First let's load the relevant libraries:
+* `mlr` for the machine learning algorithms
+* `FSelector` for Feature Selection. (Again you can use any Feature Selection library you wish)
 
 ```{r message=FALSE}
 library(mlr)
@@ -48,18 +54,24 @@ library(FSelector)
 
 
 ```{r}
-str(Diabetes1)
+glimpse(Diabetes1)
 Diabetes1 <- as.data.frame(Diabetes1)
 ```
 
+A look at the dataset I worked on in my [previous post](https://aslm123.github.io/easydsrp/posts/2018-11-06-diabetes-among-the-pima-indians-an-exploratory-analysis/) shows the variables we will be working with. 
+
+# Train and Test Set
 ```{r}
 train_index <- sample(1:nrow(Diabetes1), 0.8 * nrow(Diabetes1))
-test_index <- setdiff(1:nrow(Diabetes1), train)
+test_index <- setdiff(1:nrow(Diabetes1), train_index)
 
 
 train <- Diabetes1[train_index,]
 test <- Diabetes1[test_index,]
 ```
+
+I am going to work with a 80/20 train/test dataset. 
+
 
 ```{r}
 list(
@@ -69,52 +81,115 @@ list(
 
 ```
 
+* The training set shows our target variable having 93 positive outcomes and 172 negative outcomes. 
+* The test set shows that we have 17 positive outcomes and 50 negative outcomes. 
+
+*There is an obvious class imbalance here with our target variable and because it is skewed towards 'Negative' (No Diabetes) we will find in harder to build a predictive model for a 'Positive' Outcome.*
+
+*You can solve this issue with rebalancing the classes which will involve resampling. But, I will resort adjusting the probability threshold in the prediction stage. I do not know if this would solve any underlying issues but threshold adjustment allows you to alter a prediction to give a completely different outcome.*
+
+
 ```{r}
 colnames(train)[8] <- "Glucose"
 colnames(test)[8] <- "Glucose"
 ```
+Now here I have changed the name of the glucose variable from `Glucose(mmol/l)` to `Glucose` because the `R` naming convention for variables does not include special characters and symbols. It is more appropriate for reporting than for machine learning. If you do not change it, you will run into an error when you run the `makeClassifTask` function.
 
+# Decision Tree
+
+## Task
 
 
 ```{r}
 (dt_task <- makeClassifTask(data=train, target="Outcome"))
 ```
+First we have to make a classification task with our training set. This is where we can define which type of machine learning problem we're trying to solve and define the target variable. 
 
+As we can see, the `Positive` level of `Outcome` has defaulted to the Positive class in the machine learning task.
+*This is not always the case.* You can change it by specifying `Positive=x` (where 'x' is the target level of the variable you want to predict). In this case we want to predict the people that have diabetes (namely, the `Positive` level of the `Outcome` variable).
 
-
+## Feature Selection
 ```{r}
 generateFilterValuesData(dt_task, method = c("information.gain","chi.squared")) %>%
 plotFilterValues()
 
 ```
 
-```{r}
+In order to select which features provide the best chance to predict `Positive`, the `FSelector` package has the `generateFilterValuesData` to give us a score for each feature. This can then be plotted with `PlotFilterValues`. The score for each variable is dependednt upon which criteria you choose. Here I choose **Information Gain** and **Chi-squared** as my criteria. 
 
+As we can see with the plots that all features (some more than others) have some ability to predict what we want except for `DiabetesPedigreeFunction`. It shows no predictive capability whatsoever. This feature will need to be removed. 
+
+*I would like to remove `Skin Thickness` as well but seeing as how we are only left with 6 features, there can be a risk of underfitting my model. The other argument would be that I do not have many rows of data to deal with in the first place. This is ongoing discussion on what is the right amount of data and features (Curse of Dimensionality).*
+
+### Remove Unnecessary Features
+```{r}
 train <- select(train, -c(DiabetesPedigreeFunction))
 
 test <- select(test, -c(DiabetesPedigreeFunction))
 ```
 
+As discussed above, `DiabetesPedigreeFunction` will have to be removed. We need to remove it from both the train and test sets or we will not be able to proceed. *When predicting on the test set later, the number and names of the variables in the train and test set have to be the same*.
+
+<br>
+
+## New Task and Learner
+
+Because of the new datasets, we need to make a new Classification Task as before.
+
 ```{r}
 (dt_task <- makeClassifTask(data=train, target="Outcome"))
 ```
+As you can see the only difference is that we now have only 6 features to train our model. This will also be the case when using the test set to predict with our model.
 
-
-```{r}
-ctrl = makeTuneControlGrid()
-rdesc = makeResampleDesc("CV", iters = 2L, stratify=TRUE)
-```
-
-
-# Decision Tree
-
+We also need to define a learner based on the training data. This creates the decision tree learner that we will use to train our data on later. 
 ```{r}
 (dt_prob <- makeLearner("classif.rpart", predict.type = "prob"))
 ```
+We create the `rpart` decision tree classification algorithm by specifying `classif.rpart` (for a lost of learners use `listLearners("classif")[c("class","package")]`) with the `predict.type="prob"` in order to obtain both a predicted probability and a prediction of `Positive` or `Negative` (You can specify `predict.type="response"` for just a binary prediction).
 
+
+
+
+## Hyper Parameter Tuning
+
+
+
+
+Now any machine learning algorithm will require us to tune the hyperparameters at our own discretion. Tuning hyperparameters is the process of selecting a value for machine learning parameter with the target of obtaining your desired level of performance. 
+
+Tuning a machine learning algorithm in `mlr` involves the following procedures: 
+  * Define a search space.
+  * Define the optimization algorithm (aka tuning method).
+  * Define an evaluation method (i.ee resampling strategy and a performance measure).
+
+
+### Search Space
+
+So definng a search space is when specify parameters for a given feature/variable. As we are focusing on decision trees in this post, using the `getParamSet(*learner*)` function, we can obtain the hyperparameters for the algorith we want. 
+
+We need the parameters for the `rpart` learner.
 ```{r}
 getParamSet("classif.rpart")
 ```
+We can see that there are 10 hyperparameters for `rpart` and only `xval` is untunable (i.e it cannot be changed). 
+
+Here is an explanation of the above parameters:
+  * `minsplit`
+    - The minimum number of observations in a node for which the routine will even try to compute a split. The default is $20$. Tuning this parameter can save computation time since smaller nodes are almost always pruned away by cross-validation.
+
+  * `minbucket`
+    - Minimum number of observations in a terminal node. The default is `minspit/3` (although I do not know if this is the optimal choice).
+
+  * `maxcompete`
+    - This will show you the the variable that gave the best split at a node if set at $1$. If set larger than 1, then it will give you the second, third etc.. best. It has no effect on computation time and minimal effect on memory used.
+
+  * `maxsurrogate`
+    - 
+
+
+So now we need to set the hyperparameters to what we want. **Remeber there is no one right answer exactly. We need to define the space and run the search to automatically find which values of the hyperparameters will give us the best result ACCORDING TO THE SPACE WE DEFINED**. This means the performance may or may not be affected with a change (big or small) in the hyperparameters. 
+
+So either go with your gut if you're pressed for time or define a large space for the hyperparameters and if you have a powerful machine and outstanding patience, let `mlr` do the heavy lifting. 
 
 
 ```{r}
@@ -128,8 +203,39 @@ dt_param <- makeParamSet(
 
 ```
 
+For the model I am using I will set:
+  * `minsplit` = 10
+  * `minbucket` = 10/3
+  * `cp` = [0.01, 0.05]
+  * `maxcompete` = 6
+  * `usesurrogate` = 0
+  * `maxdepth` = 10
+
+The main reason I am not defining huge spaces is that I did before and it took about 4 hours for it to run and had **100,000** combinations of the hyperparameters. That is too much time for me personally unless I am doing a project that will hugely benefit from it.
 
 
+### Optimization Algorithm
+
+One of the standard but slow algorithms available to us is *Grid Search* to choose an appropriate set of parameters. 
+```{r}
+ctrl = makeTuneControlGrid()
+```
+This is how we specify that we would like to run a grid search. With the space that we specified above, we get 10 possible combinations in the case of `dt_param`. 
+
+### Evaluating Tuning with Resampling
+
+After specifying the above, we can now conduct the tuning process. We define a resample strategy and make note of the performance. 
+
+We set the resampling strategy to a 2-fold Cross-Validation with stratified sampling. Stratified Sampling is useful if you have class imbalances in the target variable. It will try to have the same number of classes in each fold.
+```{r}
+rdesc = makeResampleDesc("CV", iters = 2L, stratify=TRUE)
+```
+
+### Tuning
+
+We can now use `tuneParams` to show us what combination of hyperparameter values as specified by us will give us the optimal result. 
+
+In `measures` you can define which performance criteria you would like to see
 
 ```{r}
 dt_tuneparam <- tuneParams(learner=dt_prob,
@@ -140,10 +246,26 @@ dt_tuneparam <- tuneParams(learner=dt_prob,
                            task=dt_task)
 
 ```
-`r [Tune] Result: minsplit=10; minbucket=3; cp=0.0278; maxcompete=6; usesurrogate=0; maxdepth=10 : tpr.test.mean=0.6071429,auc.test.mean=0.7145430,f1.test.mean=0.6079365,acc.test.mean=0.7547277,mmce.test.mean=0.2452723,timepredict.test.mean=0.0000000,tnr.test.mean=0.8230159`
 
-`r [Tune] Result: minsplit=17; minbucket=7; cp=0.0433; maxcompete=4; usesurrogate=0; maxdepth=7 : tpr.test.mean=0.6904762,auc.test.mean=0.7277720,f1.test.mean=0.6156823,acc.test.mean=0.7283265,mmce.test.mean=0.2716735,timepredict.test.mean=0.0000000,tnr.test.mean=0.7460928`
+Upon running the tuner, we see the 10 possible combinations of the hyparameters we set. The final result at the bottom of the output (i.e `[Tune] Result:...)` gives us our optimal combination:
 
+> [Tune] Result: minsplit=10; minbucket=3; cp=0.0278; maxcompete=6; usesurrogate=0; maxdepth=10 : tpr.test.mean=0.6071429,auc.test.mean=0.7145430,f1.test.mean=0.6079365,acc.test.mean=0.7547277,mmce.test.mean=0.2452723,timepredict.test.mean=0.0000000,tnr.test.mean=0.8230159
+
+
+I am very interested in the True Positive Rate because it tell me how many people with diabetes were actually predicted to have diabetes. 61% is a good result. Of course it can be better but there are other ways to do so which you will find out later.
+
+**NOTE**
+`tuneParams` knows which performance measure to minimize and maximize. So for example, it knows to maximize accuracy and minimize error rate (mmce).
+
+<br>
+On a side not as I mentioned earlier, I defined a large search space and it took about 4 hours to finish and ended up with 100,000 combnations. This was the result:
+
+> [Tune] Result: minsplit=17; minbucket=7; cp=0.0433; maxcompete=4; usesurrogate=0; maxdepth=7 : tpr.test.mean=0.6904762,auc.test.mean=0.7277720,f1.test.mean=0.6156823,acc.test.mean=0.7283265,mmce.test.mean=0.2716735,timepredict.test.mean=0.0000000,tnr.test.mean=0.7460928
+
+You can see the results are not so different. Although the TPR is higher, I am going to use my previous hyperpaarmeters because there is a lowe misclassification rate and it is a simpler tree that is less computationally expensive.
+
+
+## Optimal HyperParameters
 
 ```{r}
 list(
@@ -152,23 +274,35 @@ list(
 )
 ```
 
+Using `dt_tuneparam$x` we can extract the optimal values and `dt_tuneparam$y` gives us the corresponding performance measures.
+
+
+`setHyperPars` will tune the learner with its optimal values.
 ```{r}
 dtree <- setHyperPars(dt_prob, par.vals = dt_tuneparam$x)
 ```
 
 
+## Model Training
+
+We finally get to the stage of training our learner.
 ```{r}
 dtree_train <- train(learner=dtree, task=dt_task)
 getLearnerModel(dtree_train)
 
 ```
+It is that simple when we get to this stage. 
 
 
+## Model Prediction (Testing)
+
+We now pass the trained learner to be used to make predictions with our test data. 
 ```{r}
 (dtree_predict <- predict(dtree_train, newdata = test))
 ```
 
 
+To see the performance of our model, we can use the following code I wrote to see it in a presentable manner.
 ```{r}
 Performance <- performance(dtree_predict, measures = list(tpr,auc,f1, mmce, acc, timepredict, tnr)) %>% 
   as.data.frame(row.names = c("True Positive","Area Under Curve", "F1", "Mean Misclassification Error","Accuracy","Time to Predict","True Negative Rate")) 
@@ -176,8 +310,11 @@ Performance <- performance(dtree_predict, measures = list(tpr,auc,f1, mmce, acc,
 Performance %>%  kable(caption="Performance of Decision Tree",digits = 2, format = 'html', col.names = "Result")
 ```
 
+We see a TPR of 65%, TNR of 78% and an AUC of 75%. These metrics are quite satisfactory. But we can still achieve a higher TPR as I describe below.
 
 
+
+### Thresholding
 
 
 ```{r}
@@ -187,18 +324,24 @@ plotThreshVsPerf()
 )
 
 ```
+We see our model is rather sensitive to changes in the threshold.
 
+
+My personal goal for this model will be to obtain an acceptable and satisfactory `True Positive Rate` and `True Negative Rate`. Since the AUC remains the same across all thresholds we need not concern ourselves with it.
+
+ From here I get the average value of the maximum value inwhich the TNR is above 0.7 and the minimum value where the TPR is less than or equal to 0.8.
 ```{r}
+mthr <- 
 mean(
 dtree_threshold$data$threshold[ which.max(dtree_threshold$data$performance[dtree_threshold$data$measure=="True negative rate"]>0.70)],
-dtree_threshold$data$threshold[ which.max(dtree_threshold$data$performance[dtree_threshold$data$measure=="True positive rate"]<=0.80)]
+dtree_threshold$data$threshold[ which.min(dtree_threshold$data$performance[dtree_threshold$data$measure=="True positive rate"]<=0.80)]
 )
 ```
 
 
 ```{r}
 DecisionTree <- dtree_predict %>%
-                    setThreshold(0.15) 
+                    setThreshold(mthr) 
 
 DecisionTree %>% 
   performance(measures = list(tpr,auc,f1, mmce, acc, timepredict, tnr))

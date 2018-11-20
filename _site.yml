@@ -1,4 +1,4 @@
-name: "easy-ds-r-python"
+name: "easy-data-science-with-r-and-python"
 title: "Easy Data Science with R and Python"
 description: |
   Using R and Python to tackle Data Science Problems one at a time. R and Python
@@ -15,13 +15,21 @@ navbar:
       href: about.html
     - icon: fa fa-rss
       href: index.xml
+    - icon: fas fa-sitemap
+      href: sitemap.xml
   left: 
     - icon: fab fa-github
       href: https://github.com/aslm123/easydsrp
+    - icon: fab fa-linkedin
+      href: https://www.linkedin.com/in/asel-mendis-a620399b
+    - icon: fa fa-envelope-o
+      href: mailto:aselmendis123@gmail.com
 collections:
   posts:
     disqus: https-aslm123-github-io-easydsrp
+    hidden: false
     share: [twitter, linkedin, facebook]
     feed_item_max: false
+    subscribe: subscribe.html
 base_url: https://aslm123.github.io/easydsrp/
 output: radix::radix_article
