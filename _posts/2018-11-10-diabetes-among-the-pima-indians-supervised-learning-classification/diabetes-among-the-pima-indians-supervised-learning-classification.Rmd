@@ -1,10 +1,9 @@
 ---
-title: "R: Diabetes Among the Pima Indians: Decision Tree Classification"
+title: "Decision Tree Classification of Diabetes among the Pima Indian Community in R using mlr"
 description: |
   In my last post I conducted EDA on the Pima Indians dataset to get it ready for a suite of Machine Learning techniques. My second post will explore just that. Taking one step at a time, my incoming posts will include one Machine Learning technique showing an indepth (as indepth as I can get) look at how to conduct each technique. Lets start with Decision Trees!
 author:
   - name: "Asel Mendis"
-    url: https://www.linkedin.com/in/asel-mendis-a620399b
 date: 11-10-2018
 output:
   radix::radix_article:
@@ -15,13 +14,12 @@ categories:
   - Decision Tree
   - Supervised Learning
   - R 
-draft: true
 repository_url: https://github.com/aslm123/easydsrp
 creative_commons: CC BY
 ---
 
 
-```{r echo=FALSE}
+```{r include=FALSE}
 library(readr)
 library(stringr)
 source_rmd <- function(file_path) {
@@ -41,36 +39,41 @@ source_rmd <- function(file_path) {
 source_rmd("C:/Users/aselr/Documents/GitHub/easydsrp/_posts/2018-11-06-diabetes-among-the-pima-indians-an-exploratory-analysis/diabetes-among-the-pima-indians-an-exploratory-analysis.Rmd")
 ```
 
-I personally like to use [`mlr`](https://mlr.mlr-org.com/index.html) to conduct my machine learning tasks but you could just as well use any other library to your liking.
+I personally like to use `mlr` to conduct my machine learning tasks but you could just as well use any other library to your liking.
 
 First let's load the relevant libraries:
-* `mlr` for the machine learning algorithms
-* `FSelector` for Feature Selection. (Again you can use any Feature Selection library you wish)
+
+  * `mlr` for the machine learning algorithms
+  * `FSelector` for Feature Selection. (Again you can use any Feature Selection library you wish)
+  * `rpart.plot` because I want to visualize the tree and I will be using the `rpart` decis
 
 ```{r message=FALSE}
 library(mlr)
 library(FSelector)
+library(rpart.plot)
+
 ```
 
 
 ```{r}
-glimpse(Diabetes1)
-Diabetes1 <- as.data.frame(Diabetes1)
+glimpse(Diabetes)
+
 ```
 
 A look at the dataset I worked on in my [previous post](https://aslm123.github.io/easydsrp/posts/2018-11-06-diabetes-among-the-pima-indians-an-exploratory-analysis/) shows the variables we will be working with. 
 
 # Train and Test Set
-```{r}
-train_index <- sample(1:nrow(Diabetes1), 0.8 * nrow(Diabetes1))
-test_index <- setdiff(1:nrow(Diabetes1), train_index)
-
-
-train <- Diabetes1[train_index,]
-test <- Diabetes1[test_index,]
-```
 
 I am going to work with a 80/20 train/test dataset. 
+
+```{r}
+train_index <- sample(1:nrow(Diabetes), 0.8 * nrow(Diabetes))
+test_index <- setdiff(1:nrow(Diabetes), train_index)
+
+
+train <- Diabetes[train_index,]
+test <- Diabetes[test_index,]
+```
 
 
 ```{r}
@@ -78,27 +81,21 @@ list(
   train = summary(train),
   test = summary(test)
 )
-
 ```
 
-* The training set shows our target variable having 93 positive outcomes and 172 negative outcomes. 
-* The test set shows that we have 17 positive outcomes and 50 negative outcomes. 
+
+* The training set shows our target variable having `r nrow(filter(train, train$Outcome=="Positive"))` positive outcomes and `r nrow(filter(train, train$Outcome=="Negative"))` negative outcomes. 
+* The test set shows that we have `r nrow(filter(test, test$Outcome=="Positive"))` positive outcomes and `r nrow(filter(test, test$Outcome=="Negative"))` negative outcomes. 
+
 
 *There is an obvious class imbalance here with our target variable and because it is skewed towards 'Negative' (No Diabetes) we will find in harder to build a predictive model for a 'Positive' Outcome.*
 
 *You can solve this issue with rebalancing the classes which will involve resampling. But, I will resort adjusting the probability threshold in the prediction stage. I do not know if this would solve any underlying issues but threshold adjustment allows you to alter a prediction to give a completely different outcome.*
 
 
-```{r}
-colnames(train)[8] <- "Glucose"
-colnames(test)[8] <- "Glucose"
-```
-Now here I have changed the name of the glucose variable from `Glucose(mmol/l)` to `Glucose` because the `R` naming convention for variables does not include special characters and symbols. It is more appropriate for reporting than for machine learning. If you do not change it, you will run into an error when you run the `makeClassifTask` function.
-
 # Decision Tree
 
 ## Task
-
 
 ```{r}
 (dt_task <- makeClassifTask(data=train, target="Outcome"))
@@ -108,52 +105,79 @@ First we have to make a classification task with our training set. This is where
 As we can see, the `Positive` level of `Outcome` has defaulted to the Positive class in the machine learning task.
 *This is not always the case.* You can change it by specifying `Positive=x` (where 'x' is the target level of the variable you want to predict). In this case we want to predict the people that have diabetes (namely, the `Positive` level of the `Outcome` variable).
 
+
+## Learner
+```{r}
+(dt_prob <- makeLearner('classif.rpart', predict.type="prob"))
+```
+After creating a classification task we need to make a learner that will later take our task to learn the data. I have chosen the rpart decision tree algorithm. This is the Recursive Partitioning Decision Tree.
+
+
 ## Feature Selection
-```{r}
-generateFilterValuesData(dt_task, method = c("information.gain","chi.squared")) %>%
-plotFilterValues()
 
+In order to select which features provide the best chance to predict `Positive`, the `generateFilterValuesData` gives us a score for each feature. This can then be plotted with `PlotFilterValues`. The score for each variable is dependednt upon which criteria you choose. Here I choose **Information Gain**, **Chi-squared** and **Gain Ratio** as my criteria. 
+
+```{r message=FALSE}
+listFilterMethods()
+generateFilterValuesData(dt_task, method = c("information.gain","chi.squared",  "gain.ratio")) %>%
+  plotFilterValues() 
 ```
 
-In order to select which features provide the best chance to predict `Positive`, the `FSelector` package has the `generateFilterValuesData` to give us a score for each feature. This can then be plotted with `PlotFilterValues`. The score for each variable is dependednt upon which criteria you choose. Here I choose **Information Gain** and **Chi-squared** as my criteria. 
+The `generateFeatureImportanceData` function also works in a similar fashion. Execpt it will show us the importance of each feature according to a given performance criteria. I have chosen **True Positive Rate** and **Area Under the Curve**.
 
-As we can see with the plots that all features (some more than others) have some ability to predict what we want except for `DiabetesPedigreeFunction`. It shows no predictive capability whatsoever. This feature will need to be removed. 
-
-*I would like to remove `Skin Thickness` as well but seeing as how we are only left with 6 features, there can be a risk of underfitting my model. The other argument would be that I do not have many rows of data to deal with in the first place. This is ongoing discussion on what is the right amount of data and features (Curse of Dimensionality).*
-
-### Remove Unnecessary Features
-```{r}
-train <- select(train, -c(DiabetesPedigreeFunction))
-
-test <- select(test, -c(DiabetesPedigreeFunction))
+```{r layout="l-body-outset", message=FALSE}
+generateFeatureImportanceData(task=dt_task, learner = dt_prob,measure = tpr, interaction = FALSE)
+generateFeatureImportanceData(task=dt_task, learner = dt_prob,measure = auc, interaction = FALSE)
 ```
 
-As discussed above, `DiabetesPedigreeFunction` will have to be removed. We need to remove it from both the train and test sets or we will not be able to proceed. *When predicting on the test set later, the number and names of the variables in the train and test set have to be the same*.
 
-<br>
+As we can see with the above output:
+  * The information gain and gain ratio show a score of zero or a low score for Pregnancies.
+  * `generateFeatureImportanceData` shows a score of zero for Pregnancies when looking at the TPR and AUC as a performance measure.
 
-## New Task and Learner
+Looking at all the evidence, `Pregnancies` will be the only variable I discard. The other variables still show predictive capabilities across certain criteria.
 
-Because of the new datasets, we need to make a new Classification Task as before.
+
+*Seeing as how we are only left with 4 features, there can be a risk of underfitting my model. The other argument for this would be that I do not have many rows of data to deal with in the first place. This is ongoing discussion on what is the right amount of data and features (Curse of Dimensionality).*
+
+
+Looking below I have taken Pregnancies out of our train and test sets and made a new classification task with our new training set.
+
+```{r}
+train <- select(train, -Pregnancies)
+test <- select(test, -Pregnancies)
+```
+
+```{r}
+list(
+  train = summary(train),
+  test = summary(test)
+)
+```
+
+Another problem is that in the Glucose category, 'Hypoglycemia' has only 5 representations in the whole dataset. When we go for cross validation this will be an issue because almost definitely this level will absent in any of the folds. This will disallow the model to be properly trained later. Therefore we need to remove Hypoglycemia from both datsets:
+
+```{r}
+train <- filter(train, Glucose!='Hypoglycemia') %>% droplevels()
+test <- filter(test, Glucose!='Hypoglycemia') %>% droplevels()
+```
+
+```{r}
+list(
+  train = summary(train),
+  test = summary(test)
+)
+```
+
+
+As we now have new datasets we need to make a new classification task based on the new training set.
 
 ```{r}
 (dt_task <- makeClassifTask(data=train, target="Outcome"))
 ```
-As you can see the only difference is that we now have only 6 features to train our model. This will also be the case when using the test set to predict with our model.
-
-We also need to define a learner based on the training data. This creates the decision tree learner that we will use to train our data on later. 
-```{r}
-(dt_prob <- makeLearner("classif.rpart", predict.type = "prob"))
-```
-We create the `rpart` decision tree classification algorithm by specifying `classif.rpart` (for a lost of learners use `listLearners("classif")[c("class","package")]`) with the `predict.type="prob"` in order to obtain both a predicted probability and a prediction of `Positive` or `Negative` (You can specify `predict.type="response"` for just a binary prediction).
-
-
 
 
 ## Hyper Parameter Tuning
-
-
-
 
 Now any machine learning algorithm will require us to tune the hyperparameters at our own discretion. Tuning hyperparameters is the process of selecting a value for machine learning parameter with the target of obtaining your desired level of performance. 
 
@@ -165,15 +189,17 @@ Tuning a machine learning algorithm in `mlr` involves the following procedures:
 
 ### Search Space
 
-So definng a search space is when specify parameters for a given feature/variable. As we are focusing on decision trees in this post, using the `getParamSet(*learner*)` function, we can obtain the hyperparameters for the algorith we want. 
+So definng a search space is when specify parameters for a given feature/variable. As we are focusing on decision trees in this post, using the `getParamSet(learner)` function, we can obtain the hyperparameters for the algorith we want. 
 
 We need the parameters for the `rpart` learner.
+
 ```{r}
 getParamSet("classif.rpart")
 ```
 We can see that there are 10 hyperparameters for `rpart` and only `xval` is untunable (i.e it cannot be changed). 
 
 Here is an explanation of the above parameters:
+
   * `minsplit`
     - The minimum number of observations in a node for which the routine will even try to compute a split. The default is $20$. Tuning this parameter can save computation time since smaller nodes are almost always pruned away by cross-validation.
 
@@ -183,9 +209,13 @@ Here is an explanation of the above parameters:
   * `maxcompete`
     - This will show you the the variable that gave the best split at a node if set at $1$. If set larger than 1, then it will give you the second, third etc.. best. It has no effect on computation time and minimal effect on memory used.
 
-  * `maxsurrogate`
-    - 
+  * `maxdepth`
+    - This controls how deep the tree can be built. 
 
+  * `cp`
+   	- This is the complexity parameter. The lower it is the larger the tree will grow. A `cp=1` will result in no tree at all. This also helps in pruning the tree. Whatever the value of `cp` we need to be cautious about overpruning the tree. Higher complexity parameters can lead to an overpruned tree. I personally find that a very high complexity parameter value (in my case above 0.3) leads to underfitting the tree due to overpruning but this also depends on teh number of features you have.
+
+I have not used surrogate variables before so I will omit them in this case. I just do not want to proceed with them at this point without an adequate understanding to explain myself.
 
 So now we need to set the hyperparameters to what we want. **Remeber there is no one right answer exactly. We need to define the space and run the search to automatically find which values of the hyperparameters will give us the best result ACCORDING TO THE SPACE WE DEFINED**. This means the performance may or may not be affected with a change (big or small) in the hyperparameters. 
 
@@ -194,18 +224,20 @@ So either go with your gut if you're pressed for time or define a large space fo
 
 ```{r}
 dt_param <- makeParamSet(
-                        makeDiscreteParam("minsplit", values=10),
-                        makeDiscreteParam("minbucket", values=round(10/3,0)),
+                        makeDiscreteParam("minsplit", values=seq(5,10,1)),
+                        makeDiscreteParam("minbucket", values=seq(round(5/3,0), round(10/3,0), 1)),
                         makeNumericParam("cp", lower = 0.01, upper = 0.05),
                         makeDiscreteParam("maxcompete", values=6),
                         makeDiscreteParam("usesurrogate", values=0),
-                        makeDiscreteParam("maxdepth", values=10))
+                        makeDiscreteParam("maxdepth", values=10)
+                        )
 
 ```
 
 For the model I am using I will set:
-  * `minsplit` = 10
-  * `minbucket` = 10/3
+
+  * `minsplit` = [5,6,7,8,9,10]
+  * `minbucket` = [5/3, 10/3]
   * `cp` = [0.01, 0.05]
   * `maxcompete` = 6
   * `usesurrogate` = 0
@@ -217,42 +249,44 @@ The main reason I am not defining huge spaces is that I did before and it took a
 ### Optimization Algorithm
 
 One of the standard but slow algorithms available to us is *Grid Search* to choose an appropriate set of parameters. 
+
 ```{r}
 ctrl = makeTuneControlGrid()
 ```
-This is how we specify that we would like to run a grid search. With the space that we specified above, we get 10 possible combinations in the case of `dt_param`. 
+
+This is how we specify that we would like to run a grid search. With the space that we specified above, we get 60 possible combinations in the case of `dt_param`. 
 
 ### Evaluating Tuning with Resampling
 
 After specifying the above, we can now conduct the tuning process. We define a resample strategy and make note of the performance. 
 
-We set the resampling strategy to a 2-fold Cross-Validation with stratified sampling. Stratified Sampling is useful if you have class imbalances in the target variable. It will try to have the same number of classes in each fold.
+We set the resampling strategy to a 4-fold Cross-Validation with stratified sampling. Stratified Sampling is useful if you have class imbalances in the target variable. It will try to have the same number of classes in each fold.
+
 ```{r}
-rdesc = makeResampleDesc("CV", iters = 2L, stratify=TRUE)
+rdesc = makeResampleDesc("CV", iters = 3L, stratify=TRUE)
 ```
 
 ### Tuning
 
 We can now use `tuneParams` to show us what combination of hyperparameter values as specified by us will give us the optimal result. 
 
-In `measures` you can define which performance criteria you would like to see
+In `measures` you can define which performance criteria you would like to see. I also want to get the standard deviation of the True Positive Rate from the test set during the cross validation. This added measure should give us an indication of how large the spread is between each fold for this measure.
 
 ```{r}
-dt_tuneparam <- tuneParams(learner=dt_prob,
+(dt_tuneparam <- tuneParams(learner=dt_prob,
                            resampling=rdesc,
-                           measures=list(tpr,auc,f1, acc, mmce, timepredict, tnr),
+                           measures=list(tpr,auc, fnr, mmce, tnr, setAggregation(tpr, test.sd)),
                            par.set=dt_param,
                            control=ctrl,
-                           task=dt_task)
-
+                           task=dt_task,
+                           show.info = TRUE)
+)
 ```
 
-Upon running the tuner, we see the 10 possible combinations of the hyparameters we set. The final result at the bottom of the output (i.e `[Tune] Result:...)` gives us our optimal combination:
+Upon running the tuner, we see the 120 possible combinations of the hyparameters we set. The final result at the bottom of the output (i.e `[Tune] Result:...)` gives us our optimal combination. This will change everytime you run it. As long as you can see similar performance results there should be no danger in going ahead with the current dataset. If the performance results begin to diverge too much, the data may be inadequate.
 
-> [Tune] Result: minsplit=10; minbucket=3; cp=0.0278; maxcompete=6; usesurrogate=0; maxdepth=10 : tpr.test.mean=0.6071429,auc.test.mean=0.7145430,f1.test.mean=0.6079365,acc.test.mean=0.7547277,mmce.test.mean=0.2452723,timepredict.test.mean=0.0000000,tnr.test.mean=0.8230159
+In the optimal hyperparameters, the standard deviation of the True Positive Rate in the test set is `r dt_tuneparam$y[[6]]`, which is relatively low and can give us an idea of the True Positive Rate we will obtain later when predicting. If the TPR from the prediction is close or in-between 1 standard deviation from the one obtained during cross validation, it is another indication that our model works well.
 
-
-I am very interested in the True Positive Rate because it tell me how many people with diabetes were actually predicted to have diabetes. 61% is a good result. Of course it can be better but there are other ways to do so which you will find out later.
 
 **NOTE**
 `tuneParams` knows which performance measure to minimize and maximize. So for example, it knows to maximize accuracy and minimize error rate (mmce).
@@ -262,15 +296,15 @@ On a side not as I mentioned earlier, I defined a large search space and it took
 
 > [Tune] Result: minsplit=17; minbucket=7; cp=0.0433; maxcompete=4; usesurrogate=0; maxdepth=7 : tpr.test.mean=0.6904762,auc.test.mean=0.7277720,f1.test.mean=0.6156823,acc.test.mean=0.7283265,mmce.test.mean=0.2716735,timepredict.test.mean=0.0000000,tnr.test.mean=0.7460928
 
-You can see the results are not so different. Although the TPR is higher, I am going to use my previous hyperpaarmeters because there is a lowe misclassification rate and it is a simpler tree that is less computationally expensive.
+Although the TPR is higher, I am going to use my previous hyperpaarmeters because it is less computationally expensive.
 
 
-## Optimal HyperParameters
+#### Optimal HyperParameters
 
 ```{r}
 list(
   `Optimal HyperParameters` = dt_tuneparam$x,
-  `Optima Metrics` = dt_tuneparam$y
+  `Optimal Metrics` = dt_tuneparam$y
 )
 ```
 
@@ -278,6 +312,7 @@ Using `dt_tuneparam$x` we can extract the optimal values and `dt_tuneparam$y` gi
 
 
 `setHyperPars` will tune the learner with its optimal values.
+
 ```{r}
 dtree <- setHyperPars(dt_prob, par.vals = dt_tuneparam$x)
 ```
@@ -286,87 +321,142 @@ dtree <- setHyperPars(dt_prob, par.vals = dt_tuneparam$x)
 ## Model Training
 
 We finally get to the stage of training our learner.
-```{r}
+
+```{r fig.height=6.5, fig.width=15, preview=TRUE, layout="l-screen-inset"}
 dtree_train <- train(learner=dtree, task=dt_task)
 getLearnerModel(dtree_train)
-
+rpart.plot(dtree_train$learner.model, roundint=FALSE, varlen=3, type = 3, clip.right.labs = FALSE, yesno = 2)
+rpart.rules(dtree_train$learner.model, roundint = FALSE)
 ```
-It is that simple when we get to this stage. 
 
+
+After training the decision tree I was able to plot it with the `rpart.plot` function and I can easily see the rules of the tree with `rpart.rules`. Since `mlr` is a wrapper for machine learning algorithms I can customize to my likinig and this is just one example. 
 
 ## Model Prediction (Testing)
 
 We now pass the trained learner to be used to make predictions with our test data. 
+
 ```{r}
 (dtree_predict <- predict(dtree_train, newdata = test))
 ```
 
+We get 6 random rows showing the predicted outcome against the actual outcome with its respective probability score for both `Positive` and `Negative`. Th threshold for classifying each row is 50/50. This is by default but can be changed later (which I will do).
 
-To see the performance of our model, we can use the following code I wrote to see it in a presentable manner.
+
 ```{r}
-Performance <- performance(dtree_predict, measures = list(tpr,auc,f1, mmce, acc, timepredict, tnr)) %>% 
-  as.data.frame(row.names = c("True Positive","Area Under Curve", "F1", "Mean Misclassification Error","Accuracy","Time to Predict","True Negative Rate")) 
+dtree_predict %>% 
+  calculateROCMeasures()
+```
+
+So now we have the confusion matrix for our model. We see that it does an excellent job in predicting a `Negative` Outcome but does poorly with a `Positive` Outcome. This is inherently due to the class imbalance in our dataset. This is why thresholding is an easier tactic to get our preferred model. Of course it would be better if we had balanced classes and more rows of observations in our data but this is not always a choice or reality.
+
+To see the performance of our model more coherently, we can use the following code I wrote to see it in a presentable manner.
+
+```{r}
+Performance <- performance(dtree_predict, measures = list(tpr,auc,mmce, acc,tnr)) %>% 
+  as.data.frame(row.names = c("True Positive","Area Under Curve", "Mean Misclassification Error","Accuracy","True Negative Rate")) 
 
 Performance %>%  kable(caption="Performance of Decision Tree",digits = 2, format = 'html', col.names = "Result")
 ```
 
-We see a TPR of 65%, TNR of 78% and an AUC of 75%. These metrics are quite satisfactory. But we can still achieve a higher TPR as I describe below.
+These metrics are quite satisfactory. But we can still achieve a higher TPR as I describe below. In certain cases including this, the TPR will be the most important and not the TNR. But in my view, I need to achieve a satisfactory TNR because if not, my misclassification (error) rate will be high. I do not think that telling someone the wrong diagnosis is acceptable. 
 
 
 
 ### Thresholding
 
-
 ```{r}
 (dtree_threshold <-
-generateThreshVsPerfData(dtree_predict, measures = list(tpr,auc,f1, mmce, acc, timepredict, tnr)) %>%
-plotThreshVsPerf()
-)
-
-```
-We see our model is rather sensitive to changes in the threshold.
-
-
-My personal goal for this model will be to obtain an acceptable and satisfactory `True Positive Rate` and `True Negative Rate`. Since the AUC remains the same across all thresholds we need not concern ourselves with it.
-
- From here I get the average value of the maximum value inwhich the TNR is above 0.7 and the minimum value where the TPR is less than or equal to 0.8.
-```{r}
-mthr <- 
-mean(
-dtree_threshold$data$threshold[ which.max(dtree_threshold$data$performance[dtree_threshold$data$measure=="True negative rate"]>0.70)],
-dtree_threshold$data$threshold[ which.min(dtree_threshold$data$performance[dtree_threshold$data$measure=="True positive rate"]<=0.80)]
+generateThreshVsPerfData(dtree_predict, measures = list(tpr,auc, mmce,tnr)) %>%
+plotThreshVsPerf() +
+  geom_point()
 )
 ```
 
+My personal goal for this model will be to obtain an acceptable and satisfactory `True Positive Rate` and `True Negative Rate`. Since the AUC remains the same across all thresholds we need not concern ourselves with it. By changing the threshold I am deliberately creating a biased model but this is a normal machine learning problem. The **Bias-Variance Tradeoff** is so common and we need to learn to navigate throught it. It is a whole other topic and anyone doing machine learning will need some knowledge of it.
+
+
+Below you will see 3 different thresholds:
+
+  * The maximum threshold in which our TPR is below 100%.
+  
+  * The minimum threshold in which our TPR is above 80%.
+  
+  * The average of the two thresholds.
+  
+  * The maximum threshold in which our TNR is above 70%.
+  
+```{r results='asis'}
+list(
+`TPR Threshold for 100%`  = tpr_threshold100 <- 
+                            dtree_threshold$data$threshold[ 
+                              which.max(dtree_threshold$data$performance[
+                                dtree_threshold$data$measure=="True positive rate"]<1)],
+
+`TPR Threshold for 80%` = tpr_threshold80 <- 
+                           dtree_threshold$data$threshold[ 
+                             which.min(dtree_threshold$data$performance[
+                               dtree_threshold$data$measure=="True positive rate"]>0.80)],
+
+`Average Threshold` = avg_threshold <- mean(c(tpr_threshold100,tpr_threshold80)),
+
+`TNR Threshold for 80%` = tnr_threshold80 <- 
+                          dtree_threshold$data$threshold[ 
+                            which.max(dtree_threshold$data$performance[
+                              dtree_threshold$data$measure=="True negative rate"]>0.70)]
+)
+```
+
+
+Using `avg_threhsold` to predict on our model one more time we can get the following performance metrics. However looking at the thresholds from the plot and the ones I defined above, our True Negative Rate is going to take a big hit. 
 
 ```{r}
 DecisionTree <- dtree_predict %>%
-                    setThreshold(mthr) 
+                    setThreshold(avg_threshold) 
 
+(dt_performance <-
 DecisionTree %>% 
-  performance(measures = list(tpr,auc,f1, mmce, acc, timepredict, tnr))
-      
+  performance(measures = list(tpr,auc, mmce,tnr))
+)
+
 ```
+
+Our TPR is now `r cat(paste((dt_performance[[1]]*100) %>% round(2),'%'))`. This is a huge difference from a 50/50 threshold. Our TNR has reduced to `r cat(paste((dt_performance[[1]]*100) %>% round(2),'%'))` but this is a consequence of biasing our model towards the TPR. I explain below looking at the new confusion matrix.
 
 
 ```{r}
+(dt_cm <-
 DecisionTree %>% 
   calculateROCMeasures()
+)
 ```
+
+We notice the other following changes:
+
+* The TNR has reduced to `r paste((dt_cm$measures$tnr*100) %>% round(0),'%')` due to the threshold difference.
+  
+* The FPR has increased to `r paste((dt_cm$measures$fpr*100) %>% round(0),'%')`. This means that the model has an increased likedlihood of a Type 1 Error in which it will detect diabetes when it is actually absent. This is a sacrifice we needed to make to get a higher TPR.
+  
+* The Accuracy has reduced to `r paste((dt_cm$measures$acc*100) %>% round(0),'%')`. This is another consequence of changing the threshold. This is not a cause for concern because our model does what I intended for it to do - Have a high True Positive Rate. Accuracy is not an adequate measure of model performance if we only care about the accurate prediction of a certain outcome. This is the case most of the time but even then you still need to dig deep into the model performance. 
 
 
 
 
 ```{r}
-Performance_threshold <- performance(DecisionTree, measures = list(tpr,auc,f1, mmce, acc, timepredict, tnr)) %>% 
-  as.data.frame(row.names = c("True Positive","Area Under Curve", "F1", "Mean Misclassification Error","Accuracy","Time to Predict","True Negative Rate")) 
+Performance_threshold <- performance(DecisionTree, measures = list(tpr,auc, mmce, acc, tnr)) %>% 
+  as.data.frame(row.names = c("True Positive","Area Under Curve", "Mean Misclassification Error","Accuracy","True Negative Rate")) 
 
-Performance_threshold %>%  kable(caption="Performance of Decision Tree\n\n(After Thresholding to 15%)",digits = 2, format = 'html', col.names = 'RESULT')
+Performance_threshold %>%  kable(caption=paste("Performance of Decision Tree\n\nAfter Thresholding to",(avg_threshold*100) %>% round(0),'%'),digits = 2, format = 'html', col.names = 'RESULT')
 ```
 
 
 
-# 
+
+# Links
+* [rpart](https://cran.r-project.org/web/packages/rpart/vignettes/longintro.pdf)
+* [rpart.plot](https://cran.r-project.org/web/packages/rpart.plot/index.html)
+* [mlr](https://mlr.mlr-org.com/index.html)
+
 
 
 

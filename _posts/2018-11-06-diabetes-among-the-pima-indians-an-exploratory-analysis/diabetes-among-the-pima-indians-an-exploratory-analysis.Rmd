@@ -129,7 +129,7 @@ Diabetes$Age <- as.integer(Diabetes$Age)
 ```
 
 
-## Missing Values
+## Dealing with Missing Values
 ${6/9}$ variables in the dataset have a number of zero markers. It appears that after taking the sum of each column and row separately, there are 763 `0` values in the dataset. Alarmingly, this represents almost 100% of our observations.
 
 ```{r}
@@ -139,81 +139,57 @@ Row = sum(rowSums(Diabetes==0))
 )
 ```
 
+### Pregnancies
 A value of '0' does not necessarily mean it is a missing value. For example:
 *A woman has a zero record of pregancies because that woman has not been pregnant.*
 
 This is one example on how careful you have to be when preprocessig your data for missing values. Zero does not mean it is missing. However in additon to that point, zero values could create problems when passing it to a machine learning model. Techniques like Regression can give you an estimate of the output when the variable is zero. Anotther method of dealing with zeros could be to bin the variable which will then create a categorical variable.
 
 ```{r}
-Diabetes1 <- Diabetes %>%  filter(Insulin > 0)
-colSums(Diabetes1==0)
+Diabetes$Pregnancies <- ifelse(Diabetes$Pregnancies==0, "No", "Yes") %>% 
+                            factor()
+colSums(Diabetes==0)
+summary(Diabetes$Pregnancies)
 ```
 
-I first filtered on `Insulin` due to the fact that it had the most zero values and now we are left with only 59 zero values with almost all the concentration in `Pregnancies`. 
-
+### Insulin
+50% of the rows in Insulin have 0 values. Lets look at it in a practical sense. There are times when the body produces little to no insulin which is a sign on Type 1 Diabetes. But I doubt this is the case in this instance. Insulin is such an important variable concerning Diabetes, but when a variable is just rife with missing values you have to do something about it. You can just impute the values, but this is medical data and half of the values are missing. It would not be appropriate to just impute the rows with it mean in my opininon. That's why no matter how important it is, it has to be **REMOVED**. This is one of those times where you need to make a tough call.
 ```{r}
-Diabetes1 <- Diabetes1 %>%  filter(Pregnancies> 0)
-colSums(Diabetes1==0)
-```
-Almost done! We have only one zero value in `Glucose`.
-
-```{r}
-Diabetes1 <- Diabetes1 %>%  filter(Glucose> 0)
-colSums(Diabetes1==0)
+Diabetes$Insulin <- NULL
+colSums(Diabetes==0)
 ```
 
-Our data is now free of zero values. BUT HOW MUCH DATA AND INFORMATION HAVE WE LOST BECAUSE OF THIS?
+### Skin Thickness
+The same can be said for `SkinThickness`. 31% of its rows have 0 as a value. Practically how can a human have 0mm skinfold thickness. This variable is also not giving us much use. Therefore I will remove this variable as well.
 
 ```{r}
-summary(Diabetes1$Outcome)
-``` 
-
-It looks like we are left with 336 observations and the ratio of target variables has not changed. `r paste(( ((nrow(Diabetes)-nrow(Diabetes1))/nrow(Diabetes))*100) %>% round(0), "%")` of our dataset has had to be filtered out. That is a significant chunk of our data. This is probably not the best way to go about this step.
-
-But in my perspective, because this is medical data, simply imputing these zeroes with the mean or mode seems like it can generate dangerous misleaeding results. Each participants biological data cannot be just replaced with a mean from a group.
-
-WHEN DEALING WITH MISSING VALUES, PROCEED WITH CAUTION AND ALWAYS TAKE YOUR ACTIONS INTO ACCOUNT ESPECIALLY IF YOU DO THIS FOR SOMEONE ELSE OR YOUR EMPLOYER.
-
-
-
-# Feature Engineering
-
-The dataset provides many informative features that need to be complemented with additional information:
-
-* BMI can be supplemented with its respective range of obesity criteria.
-
-* Glucose can be further supplememted with its criteria for normal and abnormal levels in the body.
+Diabetes$SkinThickness <- NULL
+colSums(Diabetes==0)
+```
  
-* Blood pressure is more of an incomplete set of the data. We would need systolic blood pressure to be reported to categorize it into more meaningful information.
 
-## BMI
+### BMI
+BMI can be supplemented with its respective range of obesity criteria. BMI only has 11 0 values so it would not be expected to cause too much trouble. If it was substantially higher, binning would not really solve the problem because the allocated bin may not be its correct one.
 
 ```{r}
-Diabetes1$Obesity <- 
-        ifelse(Diabetes1$BMI<19,"Underweight",
-				ifelse(Diabetes1$BMI>=19 & 
-				         Diabetes1$BMI<=25, "Normal", 
-				ifelse(Diabetes1$BMI>=25 & 
-				  Diabetes1$BMI<=30, "Overweight","Obese"))) %>% 
+Diabetes$BMI <- 
+        ifelse(Diabetes$BMI<19,"Underweight",
+				ifelse(Diabetes$BMI>=19 & 
+				         Diabetes$BMI<=25, "Normal", 
+				ifelse(Diabetes$BMI>=25 & 
+				  Diabetes$BMI<=30, "Overweight","Obese"))) %>% 
     factor(levels=c("Underweight","Normal",
                 "Overweight","Obese"))
 
-list(Obesity = summary(Diabetes1$Obesity))
+list(BMI = summary(Diabetes$BMI))
 
 ```
 
-It appears that the majority is classified as obese and only one person is classified as underweight. When we try to induce further analysis on this dataset in the future, `Underweight` is likely to cause trouble because of it only containing one value.
-
-```{r}
-Diabetes1 <- filter(Diabetes1, Obesity!='Underweight') %>% 
-              droplevels()
-list(Obesity = summary(Diabetes1$Obesity))
-```
-
-Filtering the dataset to exclude `Underweight` will still leave an unused factor level. Because of this we use `droplevels()` from base R to remove it. 
+So now I see that `Underweight` has 15 rows which means there were 15 rows that had a BMI less than 19 and knowing that `BMI` had 11 zero values, we know that most of the rows are zero. Because it is so little, I am choosing to keep it. Also, we have already removed two variables and I want to retain as much data as possible while making sure it can add value.
 
 
-# Glucose
+
+### Glucose
 
 With a 2 hour 'Oral Glucose Tolerance Test' (OGTT), people are considered to not have diabetes if after 2 hours of administering the test their levels are below 7.8 mmol/L.
 To categorize the levels of glucose tolerance, we will use the following criteria:
@@ -231,27 +207,29 @@ To categorize the levels of glucose tolerance, we will use the following criteri
 The unit of measurement for the 2-hour OGTT in this dataset is assumed to be in milligrams per deciliter (mg/dl). It can be converted to Milimoles per liter (mmol/l) so that we may appply a qualitative test result to the numeric results. Multiplying the current results by 0.0555 will convert them to be measured in mmol/l.
 
 ```{r}
-Diabetes1$Glucose <- Diabetes1$Glucose*0.0555
+Diabetes$Glucose <- Diabetes$Glucose*0.0555
 ```
 
 ```{r}
-Diabetes1$`Glucose(mmol/l)` <-
-	if_else(Diabetes1$Glucose<2.2,"Hypoglycemia",
-	if_else(Diabetes1$Glucose>=2.2 & 
-	          Diabetes1$Glucose<=7.8,"Normal",
-	if_else(Diabetes1$Glucose>7.8 & 
-	          Diabetes1$Glucose<=11.1,
+Diabetes$Glucose <-
+	if_else(Diabetes$Glucose<2.2,"Hypoglycemia",
+	if_else(Diabetes$Glucose>=2.2 & 
+	          Diabetes$Glucose<=7.8,"Normal",
+	if_else(Diabetes$Glucose>7.8 & 
+	          Diabetes$Glucose<=11.1,
 	        "Hyperglycemia","Diabetes"))) %>% 
   factor()
 ```
 
 ```{r}
 list(
-`Test Result` = summary(
-        Diabetes1$`Glucose(mmol/l)`))
+`Test Result` = summary(Diabetes$Glucose)
+)
 ```
 
-It appears that 72% of participants have Normal Glucose levels and the remaining 22% have Prediabetes.
+It appears that 74% of participants have Normal Glucose levels and 25% have Prediabetes/Hyperglycemia/High Blood Sugar.Only 1% have Hypoglycemia/Low Blood Sugar.
+
+My main concern with Hypoglycemia is that when I take it through a machine learning process, the level may not be present during k-fold cross validation. I cannot say for sure at this point but it is worth noting and keeping in mind for the future.
 
 
 ## Blood Pressure
@@ -282,7 +260,7 @@ As reported by the Centers for Disease Control and Prevention, blood pressure is
 BECAUSE SYSTOLIC PRESSURE IS NOT REPORTED, I DO NOT FEEL COMFORTABLE IN PROCEEDING WITH THIS VARIBALE. THIS IS A SUBJECTIVE DECISION OF MINE.
 
 ```{r}
-Diabetes1$BloodPressure <- NULL
+Diabetes$BloodPressure <- NULL
 ```
 
 
@@ -298,61 +276,9 @@ str(mode)
 
 ## Numeric Variables
 
-### Pregnancies
-```{r}
-ggplot(Diabetes1, aes(y=Pregnancies, x=Outcome)) + 
-      geom_boxplot() + geom_jitter()+
-      theme_bw() +
-      xlab("Outcome") + ylab("Pregnancies") +
-      stat_summary(fun.y=mode, colour="orange", 
-                  geom="point", shape=16, size=5) +
-      stat_summary(fun.y=mean, colour="purple", 
-                  geom="point", shape=16, size=5) +
-      ggtitle(label="Number of Pregancies by Outcome",
-              subtitle = "Orange=Most Frequent\nPurple=Average Number of Pregnancies") +
-      theme(axis.text.x = element_text(face="bold",size=12),
-            axis.text.y = element_text(face="bold",size=12),
-            title = element_text(face="bold",size=12),
-            
-            axis.title = element_text(face="bold",size=12)) +
-      scale_y_continuous(breaks=seq(0,20,2))
-      
-```
-
-We can see that there is a lot of noise in the number of pregancies and there is significant overlap between those who have and do not have diabetes. 
-Reagardless of the distribution of the data, the most number of pregnancies a woman had was only 1 and the average number of pregnancies per woman was 5 for those with Diabetes and 3 for those without.
-
-
-
 ### Age
 ```{r}
-ggplot(Diabetes1, aes(y=Age, x=Outcome)) + 
-      geom_boxplot() + geom_jitter()+
-      theme_bw() +
-      xlab("Outcome") + ylab("Age") +
-      stat_summary(fun.y=mode, colour="Orange", 
-                  geom="point", shape=16, size=5) +
-      stat_summary(fun.y=mean, colour="purple", 
-                  geom="point", shape=16, size=5) +
-      ggtitle(label="Age by Outcome",
-              subtitle = "Orange=Most Frequent\nPurple=Average Age") +
-      theme(axis.text.x = element_text(face="bold",size=12),
-            axis.text.y = element_text(face="bold",size=12),
-            title = element_text(face="bold",size=12),
-            
-            axis.title = element_text(face="bold",size=12)) +
-      scale_y_continuous(breaks=seq(20,64,4))
-```
-
-It appears that most of the women lie between the ages of 20 and 64. Only two women have a recorded age above 80. These two outliers can cause trouble since it appears that the women who have diabetes tend to be older. 
-
-```{r}
-Diabetes1 <- filter(Diabetes1, Age<80)
-```
-
-
-```{r fig.height=5}
-ggplot(Diabetes1, aes(y=Age, x=Outcome)) + 
+ggplot(Diabetes, aes(y=Age, x=Outcome)) + 
       geom_boxplot() + geom_jitter()+
       theme_bw() +
       xlab("Outcome") + ylab("Age") +
@@ -370,33 +296,14 @@ ggplot(Diabetes1, aes(y=Age, x=Outcome)) +
       scale_y_continuous(breaks=seq(20,80,4))
 ```
 
-After removing outliers, the statistics have not appeared to have changed. Although there is significant overlap, women with diabetes tend to be older than those who dont have diabetes. This could be due to changes in their socio-physical life in terms of diet and exercise. It is common knowledge that with age, the body tends to get weaker and humans become less physically active.
+It seems there is a lot of noise in this variable. There is no clear distinction in age with regards to having diabetes.
 
 
-### Skin Thickness
-```{r}
-ggplot(Diabetes1, aes(y=SkinThickness, x=Outcome)) + 
-      geom_boxplot() + geom_jitter()+
-      theme_bw() +
-      xlab("Outcome") + ylab("SkinThickness") +
-      stat_summary(fun.y=mode, colour="orange", 
-                  geom="point", shape=16, size=5) +
-      stat_summary(fun.y=mean, colour="purple", 
-                  geom="point", shape=16, size=5) +
-      ggtitle(label="Skin Thickness by Outcome",
-              subtitle = "Orange=Most Frequent\nPurple=Average Age") +
-      theme(axis.text.x = element_text(face="bold",size=12),
-            axis.text.y = element_text(face="bold",size=12),
-            title = element_text(face="bold",size=12),
-            axis.title = element_text(face="bold",size=12)) +
-      scale_y_continuous(breaks=seq(4,56,4))
-```
 
-Women with Diabetes have a higher skin fold thickness than women without diabetes. The `Positive` Outcome distribution appears to be normally distributed since the mode, mean and median are approximately the same. 
 
 ### Diabetes Pedigree Function
 ```{r}
-ggplot(Diabetes1, aes(y=DiabetesPedigreeFunction, x=Outcome)) + 
+ggplot(Diabetes, aes(y=DiabetesPedigreeFunction, x=Outcome)) + 
       geom_boxplot() + geom_jitter()+
       theme_bw() +
       xlab("Outcome") + ylab("DiabetesPedigreeFunction") +
@@ -413,105 +320,51 @@ ggplot(Diabetes1, aes(y=DiabetesPedigreeFunction, x=Outcome)) +
       scale_y_continuous(breaks=seq(0,3,0.5))
 ```
 
-Interestingly, the `Diabetes Pedigree Function` does not seem to give a clear picture of a diabetic outcome. 
+Interestingly, the `Diabetes Pedigree Function` does not seem to give a clear picture of a diabetic outcome. This is supposed to be a score wherein the higher the score, the more likely you are to have diabetes. This is also a variable with a lot of noise. 
 
-### Insulin
-```{r}
-ggplot(Diabetes1, aes(y=Insulin, x=Outcome)) + 
-      geom_boxplot() + geom_jitter()+
-      theme_bw() +
-      xlab("Outcome") + ylab("Insulin") +
-      stat_summary(fun.y=mode, colour="orange", 
-                  geom="point", shape=16, size=5) +
-      stat_summary(fun.y=mean, colour="purple", 
-                  geom="point", shape=16, size=5) +
-      ggtitle(label="Insulin by Outcome",
-              subtitle = "Orange=Most Frequent\nPurple=Average Age") +
-      theme(axis.text.x = element_text(face="bold",size=12),
-            axis.text.y = element_text(face="bold",size=12),
-            title = element_text(face="bold",size=12),
-            axis.title = element_text(face="bold",size=12)) +
-      scale_y_continuous(breaks=seq(0,900,50))
-```
-
-This variable is very tricky:
-
-  1. I cannot seem to find any conclusive evidence of acceptable levels of insulin. But this test is also related to the glucose tolerance test as seen above.
-  2. The unit of measurement does not seem to be easily found on the internet.
-  3. The range is **HUGE** which is an understatement. 
-  
-The values above 650 will be removed to avoid any misleading results. 
-
-```{r}
-Diabetes1 <- filter(Diabetes1, Insulin<650)
-```
-
-
-```{r}
-ggplot(Diabetes1, aes(y=Insulin, x=Outcome)) + 
-      geom_boxplot() + geom_jitter()+
-      theme_bw() +
-      xlab("Outcome") + ylab("Insulin") +
-      stat_summary(fun.y=mode, colour="orange", 
-                  geom="point", shape=16, size=5) +
-      stat_summary(fun.y=mean, colour="purple", 
-                  geom="point", shape=16, size=5) +
-      ggtitle(label="Insulin by Outcome",
-              subtitle = "Orange=Most Frequent\nPurple=Average Age") +
-      theme(axis.text.x = element_text(face="bold",size=12),
-            axis.text.y = element_text(face="bold",size=12),
-            title = element_text(face="bold",size=12),
-            axis.title = element_text(face="bold",size=12)) +
-      scale_y_continuous(breaks=seq(0,650,50))
-```
-
-Because I cannot come to a consensus on how to bin `Insulin`, I will keep it as a numeric variable.
-
-## Note
-**During the visulization, as I have done more preprocessing, there is a chance that the statistics for some of the variables will have changed.**
 
 ## Categorical Variables (% of Outcome) 
 
-### Obesity
+### Pregnancies
+
 ```{r}
-obesity <- table(Diabetes1$Obesity, Diabetes1$Outcome,
-                          dnn = c("Obesity", "Outcome")) %>% 
-            prop.table(2) 
-obesity %>% round(2) %>% 
+(pregnant <- table(Diabetes$Pregnancies, Diabetes$Outcome,
+                          dnn = c("Pregnant", "Outcome")) )
+pregnant %>% prop.table(2) %>% round(2) %>% 
   kable(format = 'html')
 ```
 
-Unsurprisingly, 82% of Diabetic women were obese while 16% were overweight. Only 2% were reported to be of normal weight.
+It seems that having a pregnancy does not necessarily increase your chances of having diabetes as the same proportion of women who had or didnt have diabetes had at least one pregnancy.
 
-Among the women that do not have diabetes, 55% were obese, 27% overweight and 18% normal. The distinction is not as clear for those with diabetes but 82% of women without diabetes were reportedly overweight and obese.
+
+### Obesity
+```{r}
+(bmi <- table(Diabetes$BMI, Diabetes$Outcome,
+                          dnn = c("BMI", "Outcome"))  )
+bmi %>% prop.table(2)%>% round(2) %>% 
+  kable(format = 'html')
+```
+
+Unsurprisingly, 80% of Diabetic women were obese while 16% were overweight. Only 3% were reported to be of normal weight. Among the women that do not have diabetes, 50% were obese, 27% overweight and 20% normal. 
 
 ### Glucose
 ```{r}
-glucose <- table(Diabetes1$`Glucose(mmol/l)`, Diabetes1$Outcome,
-                          dnn = c("Glucose Level", "Outcome")) %>% 
-            prop.table(2) 
-glucose %>% round(2) %>% 
+(glucose <- table(Diabetes$Glucose, Diabetes$Outcome,
+                          dnn = c("Glucose Level", "Outcome")) )
+glucose %>% prop.table(2) %>% round(2) %>% 
   kable(format = 'html')
 ```
 
-55% of women who has diabetes were positive for Hyperglycemia and 45% had normal glucose levels. Surprisingly, the glucose levels do not seem to clearly differentiate between those who are diabtic. Obviously, people with Hyperglycemia are more likely to have diabetes but the magnitude is very low according to the above table.
+49% of women who have diabetes were positive for Hyperglycemia and 50% had normal glucose levels. Surprisingly, the glucose levels do not seem to clearly differentiate between those who are diabetic. Obviously, people with Hyperglycemia are more likely to have diabetes but the magnitude is very low according to the above table.
 
-Now unsurprisingly, 86% of those who do not have diabetes also report to have normal glucose levels. Only 14% report Hyperglycemia.
+Unsurprisingly, 87% of women without diabetes had normal glucose levels.
+
 
 # Final Data
 
-```{r}
-Diabetes1$BMI <-  NULL
-Diabetes1$Glucose <- NULL
-```
-
-I have already binned these two variables and are not needed further. However, since I have saved two datasets in this report, I can access the corresponding numeric variables if needed. This can prove useful to trace back to debug any errors.
-
-
-
 
 ```{r}
-summary(Diabetes1)
+summary(Diabetes)
 ```
 
 

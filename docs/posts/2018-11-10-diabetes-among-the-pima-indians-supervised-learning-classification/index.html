@@ -1,0 +1,2233 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1"/>
+  <meta name="generator" content="radix" />
+
+  <style type="text/css">
+  /* Hide doc at startup (prevent jankiness while JS renders/transforms) */
+  body {
+    visibility: hidden;
+  }
+  </style>
+
+ <!--radix_placeholder_import_source-->
+ <!--/radix_placeholder_import_source-->
+
+  <!--radix_placeholder_meta_tags-->
+<title>Easy Data Science with R and Python: Decision Tree Classification of Diabetes among the Pima Indian Community in R using mlr</title>
+
+<meta property="description" itemprop="description" content="In my last post I conducted EDA on the Pima Indians dataset to get it ready for a suite of Machine Learning techniques. My second post will explore just that. Taking one step at a time, my incoming posts will include one Machine Learning technique showing an indepth (as indepth as I can get) look at how to conduct each technique. Lets start with Decision Trees!"/>
+
+<link rel="canonical" href="https://aslm123.github.io/easydsrp/posts/2018-11-10-diabetes-among-the-pima-indians-supervised-learning-classification/"/>
+<link rel="license" href="https://creativecommons.org/licenses/by/4.0/"/>
+
+<!--  https://schema.org/Article -->
+<meta property="article:published" itemprop="datePublished" content="2018-11-10"/>
+<meta property="article:created" itemprop="dateCreated" content="2018-11-10"/>
+<meta name="article:author" content="Asel Mendis"/>
+
+<!--  https://developers.facebook.com/docs/sharing/webmasters#markup -->
+<meta property="og:title" content="Easy Data Science with R and Python: Decision Tree Classification of Diabetes among the Pima Indian Community in R using mlr"/>
+<meta property="og:type" content="article"/>
+<meta property="og:description" content="In my last post I conducted EDA on the Pima Indians dataset to get it ready for a suite of Machine Learning techniques. My second post will explore just that. Taking one step at a time, my incoming posts will include one Machine Learning technique showing an indepth (as indepth as I can get) look at how to conduct each technique. Lets start with Decision Trees!"/>
+<meta property="og:url" content="https://aslm123.github.io/easydsrp/posts/2018-11-10-diabetes-among-the-pima-indians-supervised-learning-classification/"/>
+<meta property="og:image" content="https://aslm123.github.io/easydsrp/posts/2018-11-10-diabetes-among-the-pima-indians-supervised-learning-classification/diabetes-among-the-pima-indians-supervised-learning-classification_files/figure-html5/unnamed-chunk-22-1.png"/>
+<meta property="og:image:width" content="2880"/>
+<meta property="og:image:height" content="1248"/>
+<meta property="og:locale" content="en_US"/>
+<meta property="og:site_name" content="Easy Data Science with R and Python"/>
+
+<!--  https://dev.twitter.com/cards/types/summary -->
+<meta property="twitter:card" content="summary_large_image"/>
+<meta property="twitter:title" content="Easy Data Science with R and Python: Decision Tree Classification of Diabetes among the Pima Indian Community in R using mlr"/>
+<meta property="twitter:description" content="In my last post I conducted EDA on the Pima Indians dataset to get it ready for a suite of Machine Learning techniques. My second post will explore just that. Taking one step at a time, my incoming posts will include one Machine Learning technique showing an indepth (as indepth as I can get) look at how to conduct each technique. Lets start with Decision Trees!"/>
+<meta property="twitter:url" content="https://aslm123.github.io/easydsrp/posts/2018-11-10-diabetes-among-the-pima-indians-supervised-learning-classification/"/>
+<meta property="twitter:image" content="https://aslm123.github.io/easydsrp/posts/2018-11-10-diabetes-among-the-pima-indians-supervised-learning-classification/diabetes-among-the-pima-indians-supervised-learning-classification_files/figure-html5/unnamed-chunk-22-1.png"/>
+<meta property="twitter:image:width" content="2880"/>
+<meta property="twitter:image:height" content="1248"/>
+
+<!--  https://scholar.google.com/intl/en/scholar/inclusion.html#indexing -->
+<meta name="citation_title" content="Easy Data Science with R and Python: Decision Tree Classification of Diabetes among the Pima Indian Community in R using mlr"/>
+<meta name="citation_fulltext_html_url" content="https://aslm123.github.io/easydsrp/posts/2018-11-10-diabetes-among-the-pima-indians-supervised-learning-classification/"/>
+<meta name="citation_fulltext_world_readable" content=""/>
+<meta name="citation_online_date" content="2018/11/10"/>
+<meta name="citation_publication_date" content="2018/11/10"/>
+<meta name="citation_author" content="Asel Mendis"/>
+<!--/radix_placeholder_meta_tags-->
+  <!--radix_placeholder_rmarkdown_metadata-->
+
+<script type="text/json" id="radix-rmarkdown-metadata">
+{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["title","description","author","date","output","categories","repository_url","creative_commons","citation_url","canonical_url"]}},"value":[{"type":"character","attributes":{},"value":["Decision Tree Classification of Diabetes among the Pima Indian Community in R using mlr"]},{"type":"character","attributes":{},"value":["In my last post I conducted EDA on the Pima Indians dataset to get it ready for a suite of Machine Learning techniques. My second post will explore just that. Taking one step at a time, my incoming posts will include one Machine Learning technique showing an indepth (as indepth as I can get) look at how to conduct each technique. Lets start with Decision Trees!"]},{"type":"list","attributes":{},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name"]}},"value":[{"type":"character","attributes":{},"value":["Asel Mendis"]}]}]},{"type":"character","attributes":{},"value":["11-10-2018"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["radix::radix_article"]}},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["self_contained"]}},"value":[{"type":"logical","attributes":{},"value":[false]}]}]},{"type":"character","attributes":{},"value":["Machine Learning","Classification","Decision Tree","Supervised Learning","R"]},{"type":"character","attributes":{},"value":["https://github.com/aslm123/easydsrp"]},{"type":"character","attributes":{},"value":["CC BY"]},{"type":"character","attributes":{},"value":["https://aslm123.github.io/easydsrp/posts/2018-11-10-diabetes-among-the-pima-indians-supervised-learning-classification/"]},{"type":"character","attributes":{},"value":["https://aslm123.github.io/easydsrp/posts/2018-11-10-diabetes-among-the-pima-indians-supervised-learning-classification/"]}]}
+</script>
+<!--/radix_placeholder_rmarkdown_metadata-->
+  
+  <script type="text/json" id="radix-resource-manifest">
+  {"type":"character","attributes":{},"value":["advanced tuning.pdf","classifier calibration.pdf","configure mlr.pdf","cost sensitive classification.pdf","diabetes-among-the-pima-indians-supervised-learning-classification_files/bowser-1.9.3/bowser.min.js","diabetes-among-the-pima-indians-supervised-learning-classification_files/distill-2.2.21/template.v2.js","diabetes-among-the-pima-indians-supervised-learning-classification_files/figure-html5/unnamed-chunk-22-1.png","diabetes-among-the-pima-indians-supervised-learning-classification_files/figure-html5/unnamed-chunk-26-1.png","diabetes-among-the-pima-indians-supervised-learning-classification_files/figure-html5/unnamed-chunk-8-1.png","diabetes-among-the-pima-indians-supervised-learning-classification_files/jquery-1.11.3/jquery.min.js","diabetes-among-the-pima-indians-supervised-learning-classification_files/webcomponents-2.0.0/webcomponents.js","evaluating hyperparam tuning.pdf","feature selection.pdf","mlr tuning.pdf","partial dependence.pdf","performance.pdf","resampling.pdf","ROC analysis.pdf","rpart.pdf","rpartplot.pdf","visualization.pdf"]}
+  </script>
+  <!--radix_placeholder_navigation_in_header-->
+
+<script type="application/javascript">
+
+  window.headroom_prevent_pin = false;
+
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+
+    // initialize headroom for banner
+    var header = $('header').get(0);
+    var headerHeight = header.offsetHeight;
+    var headroom = new Headroom(header, {
+      onPin : function() {
+        if (window.headroom_prevent_pin) {
+          window.headroom_prevent_pin = false;
+          headroom.unpin();
+        }
+      }
+    });
+    headroom.init();
+    if(window.location.hash)
+      headroom.unpin();
+    $(header).addClass('headroom--transition');
+
+    // offset scroll location for banner on hash change
+    // (see: https://github.com/WickyNilliams/headroom.js/issues/38)
+    window.addEventListener("hashchange", function(event) {
+      window.scrollTo(0, window.pageYOffset - (headerHeight + 25));
+    });
+
+    // responsive menu
+    $('.radix-site-header').each(function(i, val) {
+      var topnav = $(this);
+      var toggle = topnav.find('.nav-toggle');
+      toggle.on('click', function() {
+        topnav.toggleClass('responsive');
+      });
+    });
+
+    // nav dropdowns
+    $('.nav-dropbtn').click(function(e) {
+      $(this).next('.nav-dropdown-content').toggleClass('nav-dropdown-active');
+      $(this).parent().siblings('.nav-dropdown')
+         .children('.nav-dropdown-content').removeClass('nav-dropdown-active');
+    });
+    $("body").click(function(e){
+      $('.nav-dropdown-content').removeClass('nav-dropdown-active');
+    });
+    $(".nav-dropdown").click(function(e){
+      e.stopPropagation();
+    });
+  });
+</script>
+
+<style type="text/css">
+
+/* Theme (user-documented overrideables for nav appearance) */
+
+.radix-site-nav {
+  color: rgba(255, 255, 255, 0.8);
+  background-color: #455a64;
+  font-size: 15px;
+  font-weight: 300;
+}
+
+.radix-site-nav a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.radix-site-nav a:hover {
+  color: white;
+}
+
+@media print {
+  .radix-site-nav {
+    display: none;
+  }
+}
+
+.radix-site-header {
+
+}
+
+.radix-site-footer {
+
+}
+
+
+/* Site Header */
+
+.radix-site-header {
+  width: 100%;
+  box-sizing: border-box;
+  z-index: 3;
+}
+
+.radix-site-header .nav-left {
+  display: inline-block;
+  margin-left: 8px;
+}
+
+@media screen and (max-width: 768px) {
+  .radix-site-header .nav-left {
+    margin-left: 0;
+  }
+}
+
+
+.radix-site-header .nav-right {
+  float: right;
+  margin-right: 8px;
+}
+
+.radix-site-header a,
+.radix-site-header .title {
+  display: inline-block;
+  text-align: center;
+  padding: 14px 10px 14px 10px;
+}
+
+.radix-site-header .title {
+  font-size: 18px;
+}
+
+.radix-site-header .logo {
+  padding: 0;
+}
+
+.radix-site-header .logo img {
+  display: none;
+  max-height: 20px;
+  width: auto;
+  margin-bottom: -4px;
+}
+
+.radix-site-header .nav-image img {
+  max-height: 18px;
+  width: auto;
+  display: inline-block;
+  margin-bottom: -3px;
+}
+
+
+
+@media screen and (min-width: 1000px) {
+  .radix-site-header .logo img {
+    display: inline-block;
+  }
+  .radix-site-header .nav-left {
+    margin-left: 20px;
+  }
+  .radix-site-header .nav-right {
+    margin-right: 20px;
+  }
+  .radix-site-header .title {
+    padding-left: 12px;
+  }
+}
+
+
+.radix-site-header .nav-toggle {
+  display: none;
+}
+
+.nav-dropdown {
+  display: inline-block;
+  position: relative;
+}
+
+.nav-dropdown .nav-dropbtn {
+  border: none;
+  outline: none;
+  color: rgba(255, 255, 255, 0.8);
+  padding: 16px 10px;
+  background-color: transparent;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  margin: 0;
+  margin-top: 1px;
+  z-index: 2;
+}
+
+.nav-dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: white;
+  min-width: 200px;
+  border: 1px solid rgba(0,0,0,0.15);
+  border-radius: 4px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.1);
+  z-index: 1;
+  margin-top: 2px;
+  white-space: nowrap;
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+.nav-dropdown-content hr {
+  margin-top: 4px;
+  margin-bottom: 4px;
+  border: none;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.nav-dropdown-active {
+  display: block;
+}
+
+.nav-dropdown-content a, .nav-dropdown-content .nav-dropdown-header {
+  color: black;
+  padding: 6px 24px;
+  text-decoration: none;
+  display: block;
+  text-align: left;
+}
+
+.nav-dropdown-content .nav-dropdown-header {
+  display: block;
+  padding: 5px 24px;
+  padding-bottom: 0;
+  text-transform: uppercase;
+  font-size: 14px;
+  color: #999999;
+  white-space: nowrap;
+}
+
+.nav-dropdown:hover .nav-dropbtn {
+  color: white;
+}
+
+.nav-dropdown-content a:hover {
+  background-color: #ddd;
+  color: black;
+}
+
+.nav-right .nav-dropdown-content {
+  margin-left: -45%;
+  right: 0;
+}
+
+@media screen and (max-width: 768px) {
+  .radix-site-header a, .radix-site-header .nav-dropdown  {display: none;}
+  .radix-site-header a.nav-toggle {
+    float: right;
+    display: block;
+  }
+  .radix-site-header .title {
+    margin-left: 0;
+  }
+  .radix-site-header .nav-right {
+    margin-right: 0;
+  }
+  .radix-site-header {
+    overflow: hidden;
+  }
+  .nav-right .nav-dropdown-content {
+    margin-left: 0;
+  }
+}
+
+
+@media screen and (max-width: 768px) {
+  .radix-site-header.responsive {position: relative;}
+  .radix-site-header.responsive a.nav-toggle {
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+  .radix-site-header.responsive a,
+  .radix-site-header.responsive .nav-dropdown {
+    display: block;
+    text-align: left;
+  }
+  .radix-site-header.responsive .nav-left,
+  .radix-site-header.responsive .nav-right {
+    width: 100%;
+  }
+  .radix-site-header.responsive .nav-dropdown {float: none;}
+  .radix-site-header.responsive .nav-dropdown-content {position: relative;}
+  .radix-site-header.responsive .nav-dropdown .nav-dropbtn {
+    display: block;
+    width: 100%;
+    text-align: left;
+  }
+}
+
+/* Site Footer */
+
+.radix-site-footer {
+  width: 100%;
+  overflow: hidden;
+  box-sizing: border-box;
+  z-index: 3;
+  margin-top: 30px;
+  padding-top: 30px;
+  padding-bottom: 30px;
+  text-align: center;
+}
+
+/* Headroom */
+
+d-title {
+  padding-top: 6rem;
+}
+
+@media print {
+  d-title {
+    padding-top: 4rem;
+  }
+}
+
+.headroom {
+  z-index: 1000;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+}
+
+.headroom--transition {
+  transition: all .4s ease-in-out;
+}
+
+.headroom--unpinned {
+  top: -100px;
+}
+
+.headroom--pinned {
+  top: 0;
+}
+
+</style>
+
+<link href="../../site_libs/font-awesome-5.0.13/css/fa-svg-with-js.css" rel="stylesheet"/>
+<script src="../../site_libs/font-awesome-5.0.13/js/fontawesome-all.min.js"></script>
+<script src="../../site_libs/font-awesome-5.0.13/js/fa-v4-shims.min.js"></script>
+<script src="../../site_libs/headroom-0.9.4/headroom.min.js"></script>
+<!--/radix_placeholder_navigation_in_header-->
+  <!--radix_placeholder_distill-->
+
+<style type="text/css">
+
+body {
+  background-color: white;
+}
+
+.pandoc-table {
+  width: 100%;
+}
+
+.pandoc-table>caption {
+  margin-bottom: 10px;
+}
+
+.pandoc-table th:not([align]) {
+  text-align: left;
+}
+
+.pagedtable-footer {
+  font-size: 15px;
+}
+
+.html-widget {
+  margin-bottom: 2.0em;
+}
+
+.l-screen-inset {
+  padding-right: 16px;
+}
+
+.l-screen .caption {
+  margin-left: 10px;
+}
+
+.shaded {
+  background: rgb(247, 247, 247);
+  padding-top: 20px;
+  padding-bottom: 20px;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.shaded .html-widget {
+  margin-bottom: 0;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.shaded .shaded-content {
+  background: white;
+}
+
+.text-output {
+  margin-top: 0;
+  line-height: 1.5em;
+}
+
+.hidden {
+  display: none !important;
+}
+
+d-article {
+  padding-bottom: 30px;
+}
+
+d-appendix {
+  padding-top: 30px;
+}
+
+d-article>p>img {
+  width: 100%;
+}
+
+d-article iframe {
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  margin-bottom: 2.0em;
+  width: 100%;
+}
+
+figure img.external {
+  background: white;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.1);
+  padding: 18px;
+  box-sizing: border-box;
+}
+
+/* CSS for table of contents */
+
+.d-toc {
+  color: rgba(0,0,0,0.8);
+  font-size: 0.8em;
+  line-height: 1em;
+}
+
+.d-toc-header {
+  font-size: 0.6rem;
+  font-weight: 400;
+  color: rgba(0, 0, 0, 0.5);
+  text-transform: uppercase;
+  margin-top: 0;
+  margin-bottom: 1.3em;
+}
+
+.d-toc a {
+  border-bottom: none;
+}
+
+.d-toc ul {
+  padding-left: 0;
+}
+
+.d-toc li>ul {
+  padding-top: 0.8em;
+  padding-left: 16px;
+  margin-bottom: 0.6em;
+}
+
+.d-toc ul,
+.d-toc li {
+  list-style-type: none;
+}
+
+.d-toc li {
+  margin-bottom: 0.9em;
+}
+
+.d-toc-separator {
+  margin-top: 20px;
+  margin-bottom: 2em;
+}
+
+.d-article-with-toc {
+  border-top: none;
+  padding-top: 0;
+}
+
+
+
+/* Tweak code blocks (note that this CSS is repeated above in an injection
+   into the d-code shadow dom) */
+
+pre.d-code code.d-code {
+  padding-left: 10px;
+  font-size: 12px;
+  border-left: 2px solid rgba(0,0,0,0.1);
+}
+
+pre.text-output {
+
+  font-size: 12px;
+  color: black;
+  background: none;
+  font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+  text-align: left;
+  white-space: pre;
+  word-spacing: normal;
+  word-break: normal;
+  word-wrap: normal;
+  line-height: 1.5;
+
+  -moz-tab-size: 4;
+  -o-tab-size: 4;
+  tab-size: 4;
+
+  -webkit-hyphens: none;
+  -moz-hyphens: none;
+  -ms-hyphens: none;
+  hyphens: none;
+}
+
+@media(min-width: 768px) {
+pre.d-code code.d-code  {
+    padding-left: 18px;
+    font-size: 14px;
+}
+pre.text-output {
+  font-size: 14px;
+}
+}
+
+/* Figure */
+
+.figure {
+  position: relative;
+  margin-bottom: 2.5em;
+  margin-top: 1.5em;
+}
+
+.figure img {
+  width: 100%;
+}
+
+.figure .caption {
+  color: rgba(0, 0, 0, 0.6);
+  font-size: 12px;
+  line-height: 1.5em;
+}
+
+.figure img.external {
+  background: white;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.1);
+  padding: 18px;
+  box-sizing: border-box;
+}
+
+.figure .caption a {
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.figure .caption b,
+.figure .caption strong, {
+  font-weight: 600;
+  color: rgba(0, 0, 0, 1.0);
+}
+
+
+
+/* Tweak 1000px media break to show more text */
+
+@media(min-width: 1000px) {
+  .base-grid,
+  distill-header,
+  d-title,
+  d-abstract,
+  d-article,
+  d-appendix,
+  distill-appendix,
+  d-byline,
+  d-footnote-list,
+  d-citation-list,
+  distill-footer {
+    grid-template-columns: [screen-start] 1fr [page-start kicker-start] 80px [middle-start] 50px [text-start kicker-end] 65px 65px 65px 65px 65px 65px 65px 65px [text-end gutter-start] 65px [middle-end] 65px [page-end gutter-end] 1fr [screen-end];
+    grid-column-gap: 16px;
+  }
+
+  .grid {
+    grid-column-gap: 16px;
+  }
+
+  d-article {
+    font-size: 1.06rem;
+    line-height: 1.7em;
+  }
+  figure .caption, .figure .caption, figure figcaption {
+    font-size: 13px;
+  }
+}
+
+@media(min-width: 1180px) {
+  .base-grid,
+  distill-header,
+  d-title,
+  d-abstract,
+  d-article,
+  d-appendix,
+  distill-appendix,
+  d-byline,
+  d-footnote-list,
+  d-citation-list,
+  distill-footer {
+    grid-template-columns: [screen-start] 1fr [page-start kicker-start] 60px [middle-start] 60px [text-start kicker-end] 60px 60px 60px 60px 60px 60px 60px 60px [text-end gutter-start] 60px [middle-end] 60px [page-end gutter-end] 1fr [screen-end];
+    grid-column-gap: 32px;
+  }
+
+  .grid {
+    grid-column-gap: 32px;
+  }
+}
+
+
+/* Get the citation styles for the appendix (not auto-injected on render since
+   we do our own rendering of the citation appendix) */
+
+d-appendix .citation-appendix,
+.d-appendix .citation-appendix {
+  font-size: 11px;
+  line-height: 15px;
+  border-left: 1px solid rgba(0, 0, 0, 0.1);
+  padding-left: 18px;
+  border: 1px solid rgba(0,0,0,0.1);
+  background: rgba(0, 0, 0, 0.02);
+  padding: 10px 18px;
+  border-radius: 3px;
+  color: rgba(150, 150, 150, 1);
+  overflow: hidden;
+  margin-top: -12px;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+
+/* Social footer */
+
+.social_footer {
+  margin-top: 30px;
+  margin-bottom: 0;
+  color: rgba(0,0,0,0.67);
+}
+
+.disqus-comments {
+  margin-right: 30px;
+}
+
+.disqus-comment-count {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.4);
+  cursor: pointer;
+}
+
+#disqus_thread {
+  margin-top: 30px;
+}
+
+.article-sharing a {
+  border-bottom: none;
+  margin-right: 8px;
+}
+
+.article-sharing a:hover {
+  border-bottom: none;
+}
+
+.sidebar-section.subscribe {
+  font-size: 12px;
+  line-height: 1.6em;
+}
+
+.subscribe p {
+  margin-bottom: 0.5em;
+}
+
+
+.article-footer .subscribe {
+  font-size: 15px;
+  margin-top: 45px;
+}
+
+
+/* Improve display for browsers without grid (IE/Edge <= 15) */
+
+.downlevel {
+  line-height: 1.6em;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", Arial, sans-serif;
+  margin: 0;
+}
+
+.downlevel .d-title {
+  padding-top: 6rem;
+  padding-bottom: 1.5rem;
+}
+
+.downlevel .d-title h1 {
+  font-size: 50px;
+  font-weight: 700;
+  line-height: 1.1em;
+  margin: 0 0 0.5rem;
+}
+
+.downlevel .d-title p {
+  font-weight: 300;
+  font-size: 1.2rem;
+  line-height: 1.55em;
+  margin-top: 0;
+}
+
+.downlevel .d-byline {
+  padding-top: 0.8em;
+  padding-bottom: 0.8em;
+  font-size: 0.8rem;
+  line-height: 1.8em;
+}
+
+.downlevel .section-separator {
+  border: none;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.downlevel .d-article {
+  font-size: 1.06rem;
+  line-height: 1.7em;
+  padding-top: 1rem;
+  padding-bottom: 2rem;
+}
+
+
+.downlevel .d-appendix {
+  padding-left: 0;
+  padding-right: 0;
+  max-width: none;
+  font-size: 0.8em;
+  line-height: 1.7em;
+  margin-bottom: 0;
+  color: rgba(0,0,0,0.5);
+  padding-top: 40px;
+  padding-bottom: 48px;
+}
+
+.downlevel .footnotes ol {
+  padding-left: 13px;
+}
+
+.downlevel .base-grid,
+.downlevel .distill-header,
+.downlevel .d-title,
+.downlevel .d-abstract,
+.downlevel .d-article,
+.downlevel .d-appendix,
+.downlevel .distill-appendix,
+.downlevel .d-byline,
+.downlevel .d-footnote-list,
+.downlevel .d-citation-list,
+.downlevel .distill-footer,
+.downlevel .appendix-bottom,
+.downlevel .posts-container {
+  padding-left: 40px;
+  padding-right: 40px;
+}
+
+@media(min-width: 768px) {
+  .downlevel .base-grid,
+  .downlevel .distill-header,
+  .downlevel .d-title,
+  .downlevel .d-abstract,
+  .downlevel .d-article,
+  .downlevel .d-appendix,
+  .downlevel .distill-appendix,
+  .downlevel .d-byline,
+  .downlevel .d-footnote-list,
+  .downlevel .d-citation-list,
+  .downlevel .distill-footer,
+  .downlevel .appendix-bottom,
+  .downlevel .posts-container {
+  padding-left: 150px;
+  padding-right: 150px;
+  max-width: 900px;
+}
+}
+
+.downlevel pre code {
+  display: block;
+  border-left: 2px solid rgba(0, 0, 0, .1);
+  padding: 0 0 0 20px;
+  font-size: 14px;
+}
+
+.downlevel code, .downlevel pre {
+  color: black;
+  background: none;
+  font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+  text-align: left;
+  white-space: pre;
+  word-spacing: normal;
+  word-break: normal;
+  word-wrap: normal;
+  line-height: 1.5;
+
+  -moz-tab-size: 4;
+  -o-tab-size: 4;
+  tab-size: 4;
+
+  -webkit-hyphens: none;
+  -moz-hyphens: none;
+  -ms-hyphens: none;
+  hyphens: none;
+}
+
+</style>
+
+<script type="application/javascript">
+
+function is_downlevel_browser() {
+  if (bowser.isUnsupportedBrowser({ msie: "12", msedge: "16"},
+                                 window.navigator.userAgent)) {
+    return true;
+  } else {
+    return window.load_distill_framework === undefined;
+  }
+}
+
+// show body when load is complete
+function on_load_complete() {
+
+  // set body to visible
+  document.body.style.visibility = 'visible';
+
+  // force redraw for leaflet widgets
+  if (window.HTMLWidgets) {
+    var maps = window.HTMLWidgets.findAll(".leaflet");
+    $.each(maps, function(i, el) {
+      var map = this.getMap();
+      map.invalidateSize();
+      map.eachLayer(function(layer) {
+        if (layer instanceof L.TileLayer)
+          layer.redraw();
+      });
+    });
+  }
+
+  // trigger 'shown' so htmlwidgets resize
+  $('d-article').trigger('shown');
+}
+
+function init_distill() {
+
+  init_common();
+
+  // create front matter
+  var front_matter = $('<d-front-matter></d-front-matter>');
+  $('#distill-front-matter').wrap(front_matter);
+
+  // create d-title
+  $('.d-title').changeElementType('d-title');
+
+  // create d-byline
+  var byline = $('<d-byline></d-byline>');
+  $('.d-byline').replaceWith(byline);
+
+  // create d-article
+  var article = $('<d-article></d-article>');
+  $('.d-article').wrap(article).children().unwrap();
+
+  // move posts container into article
+  $('.posts-container').appendTo($('d-article'));
+
+  // create d-appendix
+  $('.d-appendix').changeElementType('d-appendix');
+
+  // create d-bibliography
+  var bibliography = $('<d-bibliography></d-bibliography>');
+  $('#distill-bibliography').wrap(bibliography);
+
+  // flag indicating that we have appendix items
+  var appendix = $('.appendix-bottom').children('h3').length > 0;
+
+  // replace citations with <d-cite>
+  $('.citation').each(function(i, val) {
+    appendix = true;
+    var cites = $(this).attr('data-cites').split(" ");
+    var dt_cite = $('<d-cite></d-cite>');
+    dt_cite.attr('key', cites.join());
+    $(this).replaceWith(dt_cite);
+  });
+  // remove refs
+  $('#refs').remove();
+
+  // replace footnotes with <d-footnote>
+  $('.footnote-ref').each(function(i, val) {
+    appendix = true;
+    var href = $(this).attr('href');
+    var id = href.replace('#', '');
+    var fn = $('#' + id);
+    var fn_p = $('#' + id + '>p');
+    fn_p.find('.footnote-back').remove();
+    var text = fn_p.html();
+    var dtfn = $('<d-footnote></d-footnote>');
+    dtfn.html(text);
+    $(this).replaceWith(dtfn);
+  });
+  // remove footnotes
+  $('.footnotes').remove();
+
+  $('h1.appendix, h2.appendix').each(function(i, val) {
+    $(this).changeElementType('h3');
+  });
+  $('h3.appendix').each(function(i, val) {
+    var id = $(this).attr('id');
+    $('.d-toc a[href="#' + id + '"]').parent().remove();
+    appendix = true;
+    $(this).nextUntil($('h1, h2, h3')).addBack().appendTo($('d-appendix'));
+  });
+
+  // show d-appendix if we have appendix content
+  $("d-appendix").css('display', appendix ? 'grid' : 'none');
+
+  // replace code blocks with d-code
+  $('pre>code').each(function(i, val) {
+    var code = $(this);
+    var pre = code.parent();
+    var clz = "";
+    var language = pre.attr('class');
+    if (language) {
+      // map unknown languages to "clike" (without this they just dissapear)
+      if ($.inArray(language, ["bash", "clike", "css", "go", "html",
+                               "javascript", "js", "julia", "lua", "markdown",
+                               "markup", "mathml", "python", "svg", "xml"]) == -1)
+        language = "clike";
+      language = ' language="' + language + '"';
+      var dt_code = $('<d-code block' + language + clz + '></d-code>');
+      dt_code.text(code.text());
+      pre.replaceWith(dt_code);
+    } else {
+      code.addClass('text-output').unwrap().changeElementType('pre');
+    }
+  });
+
+  // localize layout chunks to just output
+  $('.layout-chunk').each(function(i, val) {
+
+    // capture layout
+    var layout = $(this).attr('data-layout');
+
+    // apply layout to markdown level block elements
+    var elements = $(this).children().not('d-code, pre.text-output, script');
+    elements.each(function(i, el) {
+      var layout_div = $('<div class="' + layout + '"></div>');
+      if (layout_div.hasClass('shaded')) {
+        var shaded_content = $('<div class="shaded-content"></div>');
+        $(this).wrap(shaded_content);
+        $(this).parent().wrap(layout_div);
+      } else {
+        $(this).wrap(layout_div);
+      }
+    });
+
+
+    // unwrap the layout-chunk div
+    $(this).children().unwrap();
+  });
+
+  // load distill framework
+  load_distill_framework();
+
+  // wait for window.distillRunlevel == 4 to do post processing
+  function distill_post_process() {
+
+    if (!window.distillRunlevel || window.distillRunlevel < 4)
+      return;
+
+    // hide author/affiliations entirely if we have no authors
+    var front_matter = JSON.parse($("#distill-front-matter").html());
+    var have_authors = front_matter.authors && front_matter.authors.length > 0;
+    if (!have_authors)
+      $('d-byline').addClass('hidden');
+
+    // table of contents
+    if (have_authors) // adjust border if we are in authors
+      $('.d-toc').parent().addClass('d-article-with-toc');
+
+    // strip links that point to #
+    $('.authors-affiliations').find('a[href="#"]').removeAttr('href');
+
+    // hide elements of author/affiliations grid that have no value
+    function hide_byline_column(caption) {
+      $('d-byline').find('h3:contains("' + caption + '")').parent().css('visibility', 'hidden');
+    }
+
+    // affiliations
+    var have_affiliations = false;
+    for (var i = 0; i<front_matter.authors.length; ++i) {
+      var author = front_matter.authors[i];
+      if (author.affiliation !== "&nbsp;") {
+        have_affiliations = true;
+        break;
+      }
+    }
+    if (!have_affiliations)
+      $('d-byline').find('h3:contains("Affiliations")').css('visibility', 'hidden');
+
+    // published date
+    if (!front_matter.publishedDate)
+      hide_byline_column("Published");
+
+    // document object identifier
+    var doi = $('d-byline').find('h3:contains("DOI")');
+    var doi_p = doi.next().empty();
+    if (!front_matter.doi) {
+      // if we have a citation and valid citationText then link to that
+      if ($('#citation').length > 0 && front_matter.citationText) {
+        doi.html('Citation');
+        $('<a href="#citation"></a>')
+          .text(front_matter.citationText)
+          .appendTo(doi_p);
+      } else {
+        hide_byline_column("DOI");
+      }
+    } else {
+      $('<a></a>')
+         .attr('href', "https://doi.org/" + front_matter.doi)
+         .html(front_matter.doi)
+         .appendTo(doi_p);
+    }
+
+     // change plural form of authors/affiliations
+    if (front_matter.authors.length === 1) {
+      var grid = $('.authors-affiliations');
+      grid.children('h3:contains("Authors")').text('Author');
+      grid.children('h3:contains("Affiliations")').text('Affiliation');
+    }
+
+    // inject pre code styles (can't do this with a global stylesheet b/c a shadow root is used)
+    $('d-code').each(function(i, val) {
+      var style = document.createElement('style');
+      style.innerHTML = 'pre code { padding-left: 10px; font-size: 12px; border-left: 2px solid rgba(0,0,0,0.1); } ' +
+                        '@media(min-width: 768px) { pre code { padding-left: 18px; font-size: 14px; } }';
+      if (this.shadowRoot)
+        this.shadowRoot.appendChild(style);
+    });
+
+    // move appendix-bottom entries to the bottom
+    $('.appendix-bottom').appendTo('d-appendix').children().unwrap();
+    $('.appendix-bottom').remove();
+
+    // clear polling timer
+    clearInterval(tid);
+
+    // show body now that everything is ready
+    on_load_complete();
+  }
+
+  var tid = setInterval(distill_post_process, 50);
+  distill_post_process();
+
+}
+
+function init_downlevel() {
+
+  init_common();
+
+   // insert hr after d-title
+  $('.d-title').after($('<hr class="section-separator"/>'));
+
+  // check if we have authors
+  var front_matter = JSON.parse($("#distill-front-matter").html());
+  var have_authors = front_matter.authors && front_matter.authors.length > 0;
+
+  // manage byline/border
+  if (!have_authors)
+    $('.d-byline').remove();
+  $('.d-byline').after($('<hr class="section-separator"/>'));
+  $('.d-byline a').remove();
+
+  // remove toc
+  $('.d-toc-header').remove();
+  $('.d-toc').remove();
+  $('.d-toc-separator').remove();
+
+  // move appendix elements
+  $('h1.appendix, h2.appendix').each(function(i, val) {
+    $(this).changeElementType('h3');
+  });
+  $('h3.appendix').each(function(i, val) {
+    $(this).nextUntil($('h1, h2, h3')).addBack().appendTo($('.d-appendix'));
+  });
+
+
+  // inject headers into references and footnotes
+  var refs_header = $('<h3></h3>');
+  refs_header.text('References');
+  $('#refs').prepend(refs_header);
+
+  var footnotes_header = $('<h3></h3');
+  footnotes_header.text('Footnotes');
+  $('.footnotes').children('hr').first().replaceWith(footnotes_header);
+
+  // move appendix-bottom entries to the bottom
+  $('.appendix-bottom').appendTo('.d-appendix').children().unwrap();
+  $('.appendix-bottom').remove();
+
+  // remove appendix if it's empty
+  if ($('.d-appendix').children().length === 0)
+    $('.d-appendix').remove();
+
+  // prepend separator above appendix
+  $('.d-appendix').before($('<hr class="section-separator" style="clear: both"/>'));
+
+  // trim code
+  $('pre>code').each(function(i, val) {
+    $(this).html($.trim($(this).html()));
+  });
+
+  // move posts-container right before article
+  $('.posts-container').insertBefore($('.d-article'));
+
+  $('body').addClass('downlevel');
+
+  on_load_complete();
+}
+
+
+function init_common() {
+
+  // jquery plugin to change element types
+  (function($) {
+    $.fn.changeElementType = function(newType) {
+      var attrs = {};
+
+      $.each(this[0].attributes, function(idx, attr) {
+        attrs[attr.nodeName] = attr.nodeValue;
+      });
+
+      this.replaceWith(function() {
+        return $("<" + newType + "/>", attrs).append($(this).contents());
+      });
+    };
+  })(jQuery);
+
+  // prevent underline for linked images
+  $('a > img').parent().css({'border-bottom' : 'none'});
+
+  // mark non-body figures created by knitr chunks as 100% width
+  $('.layout-chunk').each(function(i, val) {
+    var figures = $(this).find('img, .html-widget');
+    if ($(this).attr('data-layout') !== "l-body") {
+      figures.css('width', '100%');
+    } else {
+      figures.css('max-width', '100%');
+      figures.filter("[width]").each(function(i, val) {
+        var fig = $(this);
+        fig.css('width', fig.attr('width') + 'px');
+      });
+
+    }
+  });
+
+  // auto-append index.html to post-preview links in file: protocol
+  // and in rstudio ide preview
+  $('.post-preview').each(function(i, val) {
+    if (window.location.protocol === "file:")
+      $(this).attr('href', $(this).attr('href') + "index.html");
+  });
+
+  // get rid of index.html references in header
+  if (window.location.protocol !== "file:") {
+    $('.radix-site-header a[href]').each(function(i,val) {
+      $(this).attr('href', $(this).attr('href').replace("index.html", "./"));
+    });
+  }
+
+  // add class to pandoc style tables
+  $('tr.header').parent('thead').parent('table').addClass('pandoc-table');
+  $('.kable-table').children('table').addClass('pandoc-table');
+
+  // add figcaption style to table captions
+  $('caption').parent('table').addClass("figcaption");
+
+  // initialize posts list
+  if (window.init_posts_list)
+    window.init_posts_list();
+
+  // implmement disqus comment link
+  $('.disqus-comment-count').click(function() {
+    window.headroom_prevent_pin = true;
+    $('#disqus_thread').toggleClass('hidden');
+    if (!$('#disqus_thread').hasClass('hidden')) {
+      var offset = $(this).offset();
+      $(window).resize();
+      $('html, body').animate({
+        scrollTop: offset.top - 35
+      });
+    }
+  });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  if (is_downlevel_browser())
+    init_downlevel();
+  else
+    window.addEventListener('WebComponentsReady', init_distill);
+});
+
+</script>
+
+<!--/radix_placeholder_distill-->
+  <script src="../../site_libs/jquery-1.11.3/jquery.min.js"></script>
+  <script src="../../site_libs/bowser-1.9.3/bowser.min.js"></script>
+  <script src="../../site_libs/webcomponents-2.0.0/webcomponents.js"></script>
+  <script src="../../site_libs/distill-2.2.21/template.v2.js"></script>
+  <!--radix_placeholder_site_in_header-->
+<!--/radix_placeholder_site_in_header-->
+
+
+</head>
+
+<body>
+
+<!--radix_placeholder_front_matter-->
+
+<script id="distill-front-matter" type="text/json">
+{"title":"Decision Tree Classification of Diabetes among the Pima Indian Community in R using mlr","description":"In my last post I conducted EDA on the Pima Indians dataset to get it ready for a suite of Machine Learning techniques. My second post will explore just that. Taking one step at a time, my incoming posts will include one Machine Learning technique showing an indepth (as indepth as I can get) look at how to conduct each technique. Lets start with Decision Trees!","authors":[{"author":"Asel Mendis","authorURL":"#","affiliation":"&nbsp;","affiliationURL":"#"}],"publishedDate":"2018-11-10T00:00:00.000+11:00","citationText":"Mendis, 2018"}
+</script>
+
+<!--/radix_placeholder_front_matter-->
+<!--radix_placeholder_navigation_before_body-->
+<header class="header header--fixed" role="banner">
+<nav class="radix-site-nav radix-site-header">
+<div class="nav-left">
+<a href="../../index.html" class="title">Easy Data Science with R and Python</a>
+<a href="https://github.com/aslm123/easydsrp">
+<i class="fab fa-github"></i>
+</a>
+<a href="https://www.linkedin.com/in/asel-mendis-a620399b">
+<i class="fab fa-linkedin"></i>
+</a>
+<a href="../../mailto:aselmendis123@gmail.com">
+<i class="fa fa-envelope-o"></i>
+</a>
+</div>
+<div class="nav-right">
+<a href="../../index.html">Home</a>
+<a href="../../about.html">About</a>
+<a href="../../index.xml">
+<i class="fa fa-rss"></i>
+</a>
+<a href="../../sitemap.xml">
+<i class="fas fa-sitemap"></i>
+</a>
+<a href="javascript:void(0);" class="nav-toggle">&#9776;</a>
+</div>
+</nav>
+</header>
+<!--/radix_placeholder_navigation_before_body-->
+<!--radix_placeholder_site_before_body-->
+<!--/radix_placeholder_site_before_body-->
+
+<div class="d-title">
+<h1>Decision Tree Classification of Diabetes among the Pima Indian Community in R using mlr</h1>
+<p>In my last post I conducted EDA on the Pima Indians dataset to get it ready for a suite of Machine Learning techniques. My second post will explore just that. Taking one step at a time, my incoming posts will include one Machine Learning technique showing an indepth (as indepth as I can get) look at how to conduct each technique. Lets start with Decision Trees!</p>
+</div>
+
+<div class="d-byline">
+  Asel Mendis  
+  
+<br/>11-10-2018
+</div>
+
+<div class="d-article">
+<p>I personally like to use <code>mlr</code> to conduct my machine learning tasks but you could just as well use any other library to your liking.</p>
+<p>First let’s load the relevant libraries:</p>
+<ul>
+<li><code>mlr</code> for the machine learning algorithms</li>
+<li><code>FSelector</code> for Feature Selection. (Again you can use any Feature Selection library you wish)</li>
+<li><code>rpart.plot</code> because I want to visualize the tree and I will be using the <code>rpart</code> decis</li>
+</ul>
+<div class="layout-chunk" data-layout="l-body">
+<pre class="r"><code>
+library(mlr)
+library(FSelector)
+library(rpart.plot)</code></pre>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<pre class="r"><code>
+glimpse(Diabetes)</code></pre>
+<pre><code>
+Observations: 768
+Variables: 6
+$ Pregnancies              &lt;fct&gt; Yes, Yes, Yes, Yes, No, Yes, Yes...
+$ Glucose                  &lt;fct&gt; Hyperglycemia, Normal, Hyperglyc...
+$ BMI                      &lt;fct&gt; Obese, Overweight, Normal, Overw...
+$ DiabetesPedigreeFunction &lt;dbl&gt; 0.627, 0.351, 0.672, 0.167, 2.28...
+$ Age                      &lt;int&gt; 50, 31, 32, 21, 33, 30, 26, 29, ...
+$ Outcome                  &lt;fct&gt; Positive, Negative, Positive, Ne...</code></pre>
+</div>
+<p>A look at the dataset I worked on in my <a href="https://aslm123.github.io/easydsrp/posts/2018-11-06-diabetes-among-the-pima-indians-an-exploratory-analysis/">previous post</a> shows the variables we will be working with.</p>
+<h1 id="train-and-test-set">Train and Test Set</h1>
+<p>I am going to work with a 80/20 train/test dataset.</p>
+<div class="layout-chunk" data-layout="l-body">
+<pre class="r"><code>
+train_index &lt;- sample(1:nrow(Diabetes), 0.8 * nrow(Diabetes))
+test_index &lt;- setdiff(1:nrow(Diabetes), train_index)
+
+
+train &lt;- Diabetes[train_index,]
+test &lt;- Diabetes[test_index,]</code></pre>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<pre class="r"><code>
+list(
+  train = summary(train),
+  test = summary(test)
+)</code></pre>
+<pre><code>
+$train
+ Pregnancies          Glucose             BMI     
+ No : 87     Hyperglycemia:148   Underweight: 12  
+ Yes:527     Hypoglycemia :  4   Normal     : 90  
+             Normal       :462   Overweight :137  
+                                 Obese      :375  
+                                                  
+                                                  
+ DiabetesPedigreeFunction      Age            Outcome   
+ Min.   :0.0780           Min.   :21.00   Positive:218  
+ 1st Qu.:0.2450           1st Qu.:24.00   Negative:396  
+ Median :0.3755           Median :29.00                 
+ Mean   :0.4788           Mean   :33.28                 
+ 3rd Qu.:0.6392           3rd Qu.:41.00                 
+ Max.   :2.4200           Max.   :81.00                 
+
+$test
+ Pregnancies          Glucose             BMI    
+ No : 24     Hyperglycemia: 44   Underweight: 3  
+ Yes:130     Hypoglycemia :  1   Normal     :18  
+             Normal       :109   Overweight :43  
+                                 Obese      :90  
+                                                 
+                                                 
+ DiabetesPedigreeFunction      Age           Outcome   
+ Min.   :0.0880           Min.   :21.0   Positive: 50  
+ 1st Qu.:0.2380           1st Qu.:24.0   Negative:104  
+ Median :0.3550           Median :29.0                 
+ Mean   :0.4444           Mean   :33.1                 
+ 3rd Qu.:0.5830           3rd Qu.:40.0                 
+ Max.   :1.7810           Max.   :66.0                 </code></pre>
+</div>
+<ul>
+<li>The training set shows our target variable having 218 positive outcomes and 396 negative outcomes.</li>
+<li>The test set shows that we have 50 positive outcomes and 104 negative outcomes.</li>
+</ul>
+<p><em>There is an obvious class imbalance here with our target variable and because it is skewed towards ‘Negative’ (No Diabetes) we will find in harder to build a predictive model for a ‘Positive’ Outcome.</em></p>
+<p><em>You can solve this issue with rebalancing the classes which will involve resampling. But, I will resort adjusting the probability threshold in the prediction stage. I do not know if this would solve any underlying issues but threshold adjustment allows you to alter a prediction to give a completely different outcome.</em></p>
+<h1 id="decision-tree">Decision Tree</h1>
+<h2 id="task">Task</h2>
+<div class="layout-chunk" data-layout="l-body">
+<pre class="r"><code>
+(dt_task &lt;- makeClassifTask(data=train, target=&quot;Outcome&quot;))</code></pre>
+<pre><code>
+Supervised task: train
+Type: classif
+Target: Outcome
+Observations: 614
+Features:
+   numerics     factors     ordered functionals 
+          2           3           0           0 
+Missings: FALSE
+Has weights: FALSE
+Has blocking: FALSE
+Has coordinates: FALSE
+Classes: 2
+Positive Negative 
+     218      396 
+Positive class: Positive</code></pre>
+</div>
+<p>First we have to make a classification task with our training set. This is where we can define which type of machine learning problem we’re trying to solve and define the target variable.</p>
+<p>As we can see, the <code>Positive</code> level of <code>Outcome</code> has defaulted to the Positive class in the machine learning task. <em>This is not always the case.</em> You can change it by specifying <code>Positive=x</code> (where ‘x’ is the target level of the variable you want to predict). In this case we want to predict the people that have diabetes (namely, the <code>Positive</code> level of the <code>Outcome</code> variable).</p>
+<h2 id="learner">Learner</h2>
+<div class="layout-chunk" data-layout="l-body">
+<pre class="r"><code>
+(dt_prob &lt;- makeLearner(&#39;classif.rpart&#39;, predict.type=&quot;prob&quot;))</code></pre>
+<pre><code>
+Learner classif.rpart from package rpart
+Type: classif
+Name: Decision Tree; Short name: rpart
+Class: classif.rpart
+Properties: twoclass,multiclass,missings,numerics,factors,ordered,prob,weights,featimp
+Predict-Type: prob
+Hyperparameters: xval=0</code></pre>
+</div>
+<p>After creating a classification task we need to make a learner that will later take our task to learn the data. I have chosen the rpart decision tree algorithm. This is the Recursive Partitioning Decision Tree.</p>
+<h2 id="feature-selection">Feature Selection</h2>
+<p>In order to select which features provide the best chance to predict <code>Positive</code>, the <code>generateFilterValuesData</code> gives us a score for each feature. This can then be plotted with <code>PlotFilterValues</code>. The score for each variable is dependednt upon which criteria you choose. Here I choose <strong>Information Gain</strong>, <strong>Chi-squared</strong> and <strong>Gain Ratio</strong> as my criteria.</p>
+<div class="layout-chunk" data-layout="l-body">
+<pre class="r"><code>
+listFilterMethods()</code></pre>
+<pre><code>
+                           id         package
+1                  anova.test                
+2                         auc                
+3                    carscore            care
+4          cforest.importance           party
+5                 chi.squared       FSelector
+6                  gain.ratio       FSelector
+7            information.gain       FSelector
+8                kruskal.test                
+9          linear.correlation                
+10                       mrmr           mRMRe
+11                       oneR       FSelector
+12     permutation.importance                
+13    randomForest.importance    randomForest
+14      randomForestSRC.rfsrc randomForestSRC
+15 randomForestSRC.var.select randomForestSRC
+16            ranger.impurity          ranger
+17         ranger.permutation          ranger
+18           rank.correlation                
+19                     relief       FSelector
+20    symmetrical.uncertainty       FSelector
+21     univariate.model.score                
+22                   variance                
+                                       desc
+1  ANOVA Test for binary and multiclass ...
+2  AUC filter for binary classification ...
+3                                CAR scores
+4  Permutation importance of random fore...
+5  Chi-squared statistic of independence...
+6  Entropy-based gain ratio between feat...
+7  Entropy-based information gain betwee...
+8  Kruskal Test for binary and multiclas...
+9  Pearson correlation between feature a...
+10 Minimum redundancy, maximum relevance...
+11                    oneR association rule
+12 Aggregated difference between feature...
+13 Importance based on OOB-accuracy or n...
+14 Importance of random forests fitted i...
+15 Minimal depth of / variable hunting v...
+16 Variable importance based on ranger i...
+17 Variable importance based on ranger p...
+18 Spearman&#39;s correlation between featur...
+19                         RELIEF algorithm
+20 Entropy-based symmetrical uncertainty...
+21 Resamples an mlr learner for each inp...
+22                 A simple variance filter</code></pre>
+<pre class="r"><code>
+generateFilterValuesData(dt_task, method = c(&quot;information.gain&quot;,&quot;chi.squared&quot;,  &quot;gain.ratio&quot;)) %&gt;%
+  plotFilterValues() </code></pre>
+<p><img src="diabetes-among-the-pima-indians-supervised-learning-classification_files/figure-html5/unnamed-chunk-8-1.png" width="624" /></p>
+</div>
+<p>The <code>generateFeatureImportanceData</code> function also works in a similar fashion. Execpt it will show us the importance of each feature according to a given performance criteria. I have chosen <strong>True Positive Rate</strong> and <strong>Area Under the Curve</strong>.</p>
+<div class="layout-chunk" data-layout="l-body-outset">
+<pre class="r"><code>
+generateFeatureImportanceData(task=dt_task, learner = dt_prob,measure = tpr, interaction = FALSE)</code></pre>
+<pre><code>
+FeatureImportance:
+Task: train
+Interaction: FALSE
+Learner: classif.rpart
+Measure: tpr
+Contrast: function (x, y)  x - y
+Aggregation: function (x, ...)  UseMethod(&quot;mean&quot;)
+Replace: TRUE
+Number of Monte-Carlo iterations: 50
+Local: FALSE
+    Pregnancies    Glucose         BMI DiabetesPedigreeFunction
+tpr           0 -0.2072477 -0.09394495              -0.06091743
+            Age
+tpr -0.09146789</code></pre>
+<pre class="r"><code>
+generateFeatureImportanceData(task=dt_task, learner = dt_prob,measure = auc, interaction = FALSE)</code></pre>
+<pre><code>
+FeatureImportance:
+Task: train
+Interaction: FALSE
+Learner: classif.rpart
+Measure: auc
+Contrast: function (x, y)  x - y
+Aggregation: function (x, ...)  UseMethod(&quot;mean&quot;)
+Replace: TRUE
+Number of Monte-Carlo iterations: 50
+Local: FALSE
+    Pregnancies   Glucose        BMI DiabetesPedigreeFunction
+auc           0 -0.164758 -0.0535525              -0.01137418
+            Age
+auc -0.07631186</code></pre>
+</div>
+<p>As we can see with the above output: * The information gain and gain ratio show a score of zero or a low score for Pregnancies. * <code>generateFeatureImportanceData</code> shows a score of zero for Pregnancies when looking at the TPR and AUC as a performance measure.</p>
+<p>Looking at all the evidence, <code>Pregnancies</code> will be the only variable I discard. The other variables still show predictive capabilities across certain criteria.</p>
+<p><em>Seeing as how we are only left with 4 features, there can be a risk of underfitting my model. The other argument for this would be that I do not have many rows of data to deal with in the first place. This is ongoing discussion on what is the right amount of data and features (Curse of Dimensionality).</em></p>
+<p>Looking below I have taken Pregnancies out of our train and test sets and made a new classification task with our new training set.</p>
+<div class="layout-chunk" data-layout="l-body">
+<pre class="r"><code>
+train &lt;- select(train, -Pregnancies)
+test &lt;- select(test, -Pregnancies)</code></pre>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<pre class="r"><code>
+list(
+  train = summary(train),
+  test = summary(test)
+)</code></pre>
+<pre><code>
+$train
+          Glucose             BMI      DiabetesPedigreeFunction
+ Hyperglycemia:148   Underweight: 12   Min.   :0.0780          
+ Hypoglycemia :  4   Normal     : 90   1st Qu.:0.2450          
+ Normal       :462   Overweight :137   Median :0.3755          
+                     Obese      :375   Mean   :0.4788          
+                                       3rd Qu.:0.6392          
+                                       Max.   :2.4200          
+      Age            Outcome   
+ Min.   :21.00   Positive:218  
+ 1st Qu.:24.00   Negative:396  
+ Median :29.00                 
+ Mean   :33.28                 
+ 3rd Qu.:41.00                 
+ Max.   :81.00                 
+
+$test
+          Glucose             BMI     DiabetesPedigreeFunction
+ Hyperglycemia: 44   Underweight: 3   Min.   :0.0880          
+ Hypoglycemia :  1   Normal     :18   1st Qu.:0.2380          
+ Normal       :109   Overweight :43   Median :0.3550          
+                     Obese      :90   Mean   :0.4444          
+                                      3rd Qu.:0.5830          
+                                      Max.   :1.7810          
+      Age           Outcome   
+ Min.   :21.0   Positive: 50  
+ 1st Qu.:24.0   Negative:104  
+ Median :29.0                 
+ Mean   :33.1                 
+ 3rd Qu.:40.0                 
+ Max.   :66.0                 </code></pre>
+</div>
+<p>Another problem is that in the Glucose category, ‘Hypoglycemia’ has only 5 representations in the whole dataset. When we go for cross validation this will be an issue because almost definitely this level will absent in any of the folds. This will disallow the model to be properly trained later. Therefore we need to remove Hypoglycemia from both datsets:</p>
+<div class="layout-chunk" data-layout="l-body">
+<pre class="r"><code>
+train &lt;- filter(train, Glucose!=&#39;Hypoglycemia&#39;) %&gt;% droplevels()
+test &lt;- filter(test, Glucose!=&#39;Hypoglycemia&#39;) %&gt;% droplevels()</code></pre>
+</div>
+<div class="layout-chunk" data-layout="l-body">
+<pre class="r"><code>
+list(
+  train = summary(train),
+  test = summary(test)
+)</code></pre>
+<pre><code>
+$train
+          Glucose             BMI      DiabetesPedigreeFunction
+ Hyperglycemia:148   Underweight: 12   Min.   :0.0780          
+ Normal       :462   Normal     : 89   1st Qu.:0.2450          
+                     Overweight :137   Median :0.3755          
+                     Obese      :372   Mean   :0.4793          
+                                       3rd Qu.:0.6392          
+                                       Max.   :2.4200          
+      Age           Outcome   
+ Min.   :21.0   Positive:216  
+ 1st Qu.:24.0   Negative:394  
+ Median :29.0                 
+ Mean   :33.3                 
+ 3rd Qu.:41.0                 
+ Max.   :81.0                 
+
+$test
+          Glucose             BMI     DiabetesPedigreeFunction
+ Hyperglycemia: 44   Underweight: 3   Min.   :0.0880          
+ Normal       :109   Normal     :18   1st Qu.:0.2380          
+                     Overweight :42   Median :0.3580          
+                     Obese      :90   Mean   :0.4454          
+                                      3rd Qu.:0.5830          
+                                      Max.   :1.7810          
+      Age            Outcome   
+ Min.   :21.00   Positive: 50  
+ 1st Qu.:24.00   Negative:103  
+ Median :29.00                 
+ Mean   :33.18                 
+ 3rd Qu.:40.00                 
+ Max.   :66.00                 </code></pre>
+</div>
+<p>As we now have new datasets we need to make a new classification task based on the new training set.</p>
+<div class="layout-chunk" data-layout="l-body">
+<pre class="r"><code>
+(dt_task &lt;- makeClassifTask(data=train, target=&quot;Outcome&quot;))</code></pre>
+<pre><code>
+Supervised task: train
+Type: classif
+Target: Outcome
+Observations: 610
+Features:
+   numerics     factors     ordered functionals 
+          2           2           0           0 
+Missings: FALSE
+Has weights: FALSE
+Has blocking: FALSE
+Has coordinates: FALSE
+Classes: 2
+Positive Negative 
+     216      394 
+Positive class: Positive</code></pre>
+</div>
+<h2 id="hyper-parameter-tuning">Hyper Parameter Tuning</h2>
+<p>Now any machine learning algorithm will require us to tune the hyperparameters at our own discretion. Tuning hyperparameters is the process of selecting a value for machine learning parameter with the target of obtaining your desired level of performance.</p>
+<p>Tuning a machine learning algorithm in <code>mlr</code> involves the following procedures: * Define a search space. * Define the optimization algorithm (aka tuning method). * Define an evaluation method (i.ee resampling strategy and a performance measure).</p>
+<h3 id="search-space">Search Space</h3>
+<p>So definng a search space is when specify parameters for a given feature/variable. As we are focusing on decision trees in this post, using the <code>getParamSet(learner)</code> function, we can obtain the hyperparameters for the algorith we want.</p>
+<p>We need the parameters for the <code>rpart</code> learner.</p>
+<div class="layout-chunk" data-layout="l-body">
+<pre class="r"><code>
+getParamSet(&quot;classif.rpart&quot;)</code></pre>
+<pre><code>
+                   Type len  Def   Constr Req Tunable Trafo
+minsplit        integer   -   20 1 to Inf   -    TRUE     -
+minbucket       integer   -    - 1 to Inf   -    TRUE     -
+cp              numeric   - 0.01   0 to 1   -    TRUE     -
+maxcompete      integer   -    4 0 to Inf   -    TRUE     -
+maxsurrogate    integer   -    5 0 to Inf   -    TRUE     -
+usesurrogate   discrete   -    2    0,1,2   -    TRUE     -
+surrogatestyle discrete   -    0      0,1   -    TRUE     -
+maxdepth        integer   -   30  1 to 30   -    TRUE     -
+xval            integer   -   10 0 to Inf   -   FALSE     -
+parms           untyped   -    -        -   -    TRUE     -</code></pre>
+</div>
+<p>We can see that there are 10 hyperparameters for <code>rpart</code> and only <code>xval</code> is untunable (i.e it cannot be changed).</p>
+<p>Here is an explanation of the above parameters:</p>
+<ul>
+<li><code>minsplit</code>
+<ul>
+<li>The minimum number of observations in a node for which the routine will even try to compute a split. The default is <span class="math inline">\(20\)</span>. Tuning this parameter can save computation time since smaller nodes are almost always pruned away by cross-validation.</li>
+</ul></li>
+<li><code>minbucket</code>
+<ul>
+<li>Minimum number of observations in a terminal node. The default is <code>minspit/3</code> (although I do not know if this is the optimal choice).</li>
+</ul></li>
+<li><code>maxcompete</code>
+<ul>
+<li>This will show you the the variable that gave the best split at a node if set at <span class="math inline">\(1\)</span>. If set larger than 1, then it will give you the second, third etc.. best. It has no effect on computation time and minimal effect on memory used.</li>
+</ul></li>
+<li><code>maxdepth</code>
+<ul>
+<li>This controls how deep the tree can be built.</li>
+</ul></li>
+<li><code>cp</code>
+<ul>
+<li>This is the complexity parameter. The lower it is the larger the tree will grow. A <code>cp=1</code> will result in no tree at all. This also helps in pruning the tree. Whatever the value of <code>cp</code> we need to be cautious about overpruning the tree. Higher complexity parameters can lead to an overpruned tree. I personally find that a very high complexity parameter value (in my case above 0.3) leads to underfitting the tree due to overpruning but this also depends on teh number of features you have.</li>
+</ul></li>
+</ul>
+<p>I have not used surrogate variables before so I will omit them in this case. I just do not want to proceed with them at this point without an adequate understanding to explain myself.</p>
+<p>So now we need to set the hyperparameters to what we want. <strong>Remeber there is no one right answer exactly. We need to define the space and run the search to automatically find which values of the hyperparameters will give us the best result ACCORDING TO THE SPACE WE DEFINED</strong>. This means the performance may or may not be affected with a change (big or small) in the hyperparameters.</p>
+<p>So either go with your gut if you’re pressed for time or define a large space for the hyperparameters and if you have a powerful machine and outstanding patience, let <code>mlr</code> do the heavy lifting.</p>
+<div class="layout-chunk" data-layout="l-body">
+<pre class="r"><code>
+dt_param &lt;- makeParamSet(
+                        makeDiscreteParam(&quot;minsplit&quot;, values=seq(5,10,1)),
+                        makeDiscreteParam(&quot;minbucket&quot;, values=seq(round(5/3,0), round(10/3,0), 1)),
+                        makeNumericParam(&quot;cp&quot;, lower = 0.01, upper = 0.05),
+                        makeDiscreteParam(&quot;maxcompete&quot;, values=6),
+                        makeDiscreteParam(&quot;usesurrogate&quot;, values=0),
+                        makeDiscreteParam(&quot;maxdepth&quot;, values=10)
+                        )</code></pre>
+</div>
+<p>For the model I am using I will set:</p>
+<ul>
+<li><code>minsplit</code> = [5,6,7,8,9,10]</li>
+<li><code>minbucket</code> = [5/3, 10/3]</li>
+<li><code>cp</code> = [0.01, 0.05]</li>
+<li><code>maxcompete</code> = 6</li>
+<li><code>usesurrogate</code> = 0</li>
+<li><code>maxdepth</code> = 10</li>
+</ul>
+<p>The main reason I am not defining huge spaces is that I did before and it took about 4 hours for it to run and had <strong>100,000</strong> combinations of the hyperparameters. That is too much time for me personally unless I am doing a project that will hugely benefit from it.</p>
+<h3 id="optimization-algorithm">Optimization Algorithm</h3>
+<p>One of the standard but slow algorithms available to us is <em>Grid Search</em> to choose an appropriate set of parameters.</p>
+<div class="layout-chunk" data-layout="l-body">
+<pre class="r"><code>
+ctrl = makeTuneControlGrid()</code></pre>
+</div>
+<p>This is how we specify that we would like to run a grid search. With the space that we specified above, we get 60 possible combinations in the case of <code>dt_param</code>.</p>
+<h3 id="evaluating-tuning-with-resampling">Evaluating Tuning with Resampling</h3>
+<p>After specifying the above, we can now conduct the tuning process. We define a resample strategy and make note of the performance.</p>
+<p>We set the resampling strategy to a 4-fold Cross-Validation with stratified sampling. Stratified Sampling is useful if you have class imbalances in the target variable. It will try to have the same number of classes in each fold.</p>
+<div class="layout-chunk" data-layout="l-body">
+<pre class="r"><code>
+rdesc = makeResampleDesc(&quot;CV&quot;, iters = 3L, stratify=TRUE)</code></pre>
+</div>
+<h3 id="tuning">Tuning</h3>
+<p>We can now use <code>tuneParams</code> to show us what combination of hyperparameter values as specified by us will give us the optimal result.</p>
+<p>In <code>measures</code> you can define which performance criteria you would like to see. I also want to get the standard deviation of the True Positive Rate from the test set during the cross validation. This added measure should give us an indication of how large the spread is between each fold for this measure.</p>
+<div class="layout-chunk" data-layout="l-body">
+<pre class="r"><code>
+(dt_tuneparam &lt;- tuneParams(learner=dt_prob,
+                           resampling=rdesc,
+                           measures=list(tpr,auc, fnr, mmce, tnr, setAggregation(tpr, test.sd)),
+                           par.set=dt_param,
+                           control=ctrl,
+                           task=dt_task,
+                           show.info = TRUE)
+)</code></pre>
+<pre><code>
+Tune result:
+Op. pars: minsplit=9; minbucket=3; cp=0.01; maxcompete=6; usesurrogate=0; maxdepth=10
+tpr.test.mean=0.5925926,auc.test.mean=0.7851470,fnr.test.mean=0.4074074,mmce.test.mean=0.2507969,tnr.test.mean=0.8350104,tpr.test.sd=0.0561313</code></pre>
+</div>
+<p>Upon running the tuner, we see the 120 possible combinations of the hyparameters we set. The final result at the bottom of the output (i.e <code>[Tune] Result:...)</code> gives us our optimal combination. This will change everytime you run it. As long as you can see similar performance results there should be no danger in going ahead with the current dataset. If the performance results begin to diverge too much, the data may be inadequate.</p>
+<p>In the optimal hyperparameters, the standard deviation of the True Positive Rate in the test set is 0.0561313, which is relatively low and can give us an idea of the True Positive Rate we will obtain later when predicting. If the TPR from the prediction is close or in-between 1 standard deviation from the one obtained during cross validation, it is another indication that our model works well.</p>
+<p><strong>NOTE</strong> <code>tuneParams</code> knows which performance measure to minimize and maximize. So for example, it knows to maximize accuracy and minimize error rate (mmce).</p>
+<p><br> On a side not as I mentioned earlier, I defined a large search space and it took about 4 hours to finish and ended up with 100,000 combnations. This was the result:</p>
+<blockquote>
+<p>[Tune] Result: minsplit=17; minbucket=7; cp=0.0433; maxcompete=4; usesurrogate=0; maxdepth=7 : tpr.test.mean=0.6904762,auc.test.mean=0.7277720,f1.test.mean=0.6156823,acc.test.mean=0.7283265,mmce.test.mean=0.2716735,timepredict.test.mean=0.0000000,tnr.test.mean=0.7460928</p>
+</blockquote>
+<p>Although the TPR is higher, I am going to use my previous hyperpaarmeters because it is less computationally expensive.</p>
+<h4 id="optimal-hyperparameters">Optimal HyperParameters</h4>
+<div class="layout-chunk" data-layout="l-body">
+<pre class="r"><code>
+list(
+  `Optimal HyperParameters` = dt_tuneparam$x,
+  `Optimal Metrics` = dt_tuneparam$y
+)</code></pre>
+<pre><code>
+$`Optimal HyperParameters`
+$`Optimal HyperParameters`$minsplit
+[1] 9
+
+$`Optimal HyperParameters`$minbucket
+[1] 3
+
+$`Optimal HyperParameters`$cp
+[1] 0.01
+
+$`Optimal HyperParameters`$maxcompete
+[1] 6
+
+$`Optimal HyperParameters`$usesurrogate
+[1] 0
+
+$`Optimal HyperParameters`$maxdepth
+[1] 10
+
+
+$`Optimal Metrics`
+ tpr.test.mean  auc.test.mean  fnr.test.mean mmce.test.mean 
+    0.59259259     0.78514698     0.40740741     0.25079687 
+ tnr.test.mean    tpr.test.sd 
+    0.83501041     0.05613128 </code></pre>
+</div>
+<p>Using <code>dt_tuneparam$x</code> we can extract the optimal values and <code>dt_tuneparam$y</code> gives us the corresponding performance measures.</p>
+<p><code>setHyperPars</code> will tune the learner with its optimal values.</p>
+<div class="layout-chunk" data-layout="l-body">
+<pre class="r"><code>
+dtree &lt;- setHyperPars(dt_prob, par.vals = dt_tuneparam$x)</code></pre>
+</div>
+<h2 id="model-training">Model Training</h2>
+<p>We finally get to the stage of training our learner.</p>
+<div class="layout-chunk" data-layout="l-screen-inset">
+<pre class="r"><code>
+dtree_train &lt;- train(learner=dtree, task=dt_task)
+getLearnerModel(dtree_train)</code></pre>
+<pre><code>
+n= 610 
+
+node), split, n, loss, yval, (yprob)
+      * denotes terminal node
+
+ 1) root 610 216 Negative (0.35409836 0.64590164)  
+   2) Glucose=Hyperglycemia 148  40 Positive (0.72972973 0.27027027)  
+     4) BMI=Obese 117  25 Positive (0.78632479 0.21367521) *
+     5) BMI=Normal,Overweight 31  15 Positive (0.51612903 0.48387097)  
+      10) Age&gt;=41 12   3 Positive (0.75000000 0.25000000) *
+      11) Age&lt; 41 19   7 Negative (0.36842105 0.63157895) *
+   3) Glucose=Normal 462 108 Negative (0.23376623 0.76623377)  
+     6) Age&gt;=28.5 212  80 Negative (0.37735849 0.62264151)  
+      12) BMI=Underweight,Overweight,Obese 186  79 Negative (0.42473118 0.57526882)  
+        24) DiabetesPedigreeFunction&gt;=0.5275 65  27 Positive (0.58461538 0.41538462)  
+          48) Age&gt;=42.5 24   7 Positive (0.70833333 0.29166667) *
+          49) Age&lt; 42.5 41  20 Positive (0.51219512 0.48780488)  
+            98) Age&lt; 33.5 23   8 Positive (0.65217391 0.34782609) *
+            99) Age&gt;=33.5 18   6 Negative (0.33333333 0.66666667) *
+        25) DiabetesPedigreeFunction&lt; 0.5275 121  41 Negative (0.33884298 0.66115702) *
+      13) BMI=Normal 26   1 Negative (0.03846154 0.96153846) *
+     7) Age&lt; 28.5 250  28 Negative (0.11200000 0.88800000) *</code></pre>
+<pre class="r"><code>
+rpart.plot(dtree_train$learner.model, roundint=FALSE, varlen=3, type = 3, clip.right.labs = FALSE, yesno = 2)</code></pre>
+<p><img src="diabetes-among-the-pima-indians-supervised-learning-classification_files/figure-html5/unnamed-chunk-22-1.png" width="1440" data-radix-preview=1 /></p>
+<pre class="r"><code>
+rpart.rules(dtree_train$learner.model, roundint = FALSE)</code></pre>
+<pre><code>
+ Outcome                                                                                                                               
+    0.21 when Glucose is Hyperglycemia                   &amp; BMI is                              Obese                                   
+    0.25 when Glucose is Hyperglycemia &amp; Age &gt;=       41 &amp; BMI is               Normal or Overweight                                   
+    0.29 when Glucose is        Normal &amp; Age &gt;=       43 &amp; BMI is Underweight or Overweight or Obese &amp; DiabetesPedigreeFunction &gt;= 0.53
+    0.35 when Glucose is        Normal &amp; Age is 29 to 34 &amp; BMI is Underweight or Overweight or Obese &amp; DiabetesPedigreeFunction &gt;= 0.53
+    0.63 when Glucose is Hyperglycemia &amp; Age &lt;  41       &amp; BMI is               Normal or Overweight                                   
+    0.66 when Glucose is        Normal &amp; Age &gt;=       29 &amp; BMI is Underweight or Overweight or Obese &amp; DiabetesPedigreeFunction &lt;  0.53
+    0.67 when Glucose is        Normal &amp; Age is 34 to 43 &amp; BMI is Underweight or Overweight or Obese &amp; DiabetesPedigreeFunction &gt;= 0.53
+    0.89 when Glucose is        Normal &amp; Age &lt;  29                                                                                     
+    0.96 when Glucose is        Normal &amp; Age &gt;=       29 &amp; BMI is                             Normal                                   </code></pre>
+</div>
+<p>After training the decision tree I was able to plot it with the <code>rpart.plot</code> function and I can easily see the rules of the tree with <code>rpart.rules</code>. Since <code>mlr</code> is a wrapper for machine learning algorithms I can customize to my likinig and this is just one example.</p>
+<h2 id="model-prediction-testing">Model Prediction (Testing)</h2>
+<p>We now pass the trained learner to be used to make predictions with our test data.</p>
+<div class="layout-chunk" data-layout="l-body">
+<pre class="r"><code>
+(dtree_predict &lt;- predict(dtree_train, newdata = test))</code></pre>
+<pre><code>
+Prediction: 153 observations
+predict.type: prob
+threshold: Positive=0.50,Negative=0.50
+time: 0.00
+     truth prob.Positive prob.Negative response
+1 Negative      0.338843      0.661157 Negative
+2 Negative      0.338843      0.661157 Negative
+3 Positive      0.112000      0.888000 Negative
+4 Negative      0.338843      0.661157 Negative
+5 Positive      0.338843      0.661157 Negative
+6 Negative      0.338843      0.661157 Negative
+... (#rows: 153, #cols: 4)</code></pre>
+</div>
+<p>We get 6 random rows showing the predicted outcome against the actual outcome with its respective probability score for both <code>Positive</code> and <code>Negative</code>. Th threshold for classifying each row is 50/50. This is by default but can be changed later (which I will do).</p>
+<div class="layout-chunk" data-layout="l-body">
+<pre class="r"><code>
+dtree_predict %&gt;% 
+  calculateROCMeasures()</code></pre>
+<pre><code>
+          predicted
+true       Positive Negative                     
+  Positive 25       25        tpr: 0.5  fnr: 0.5 
+  Negative 17       86        fpr: 0.17 tnr: 0.83
+           ppv: 0.6 for: 0.23 lrp: 3.03 acc: 0.73
+           fdr: 0.4 npv: 0.77 lrm: 0.6  dor: 5.06
+
+
+Abbreviations:
+tpr - True positive rate (Sensitivity, Recall)
+fpr - False positive rate (Fall-out)
+fnr - False negative rate (Miss rate)
+tnr - True negative rate (Specificity)
+ppv - Positive predictive value (Precision)
+for - False omission rate
+lrp - Positive likelihood ratio (LR+)
+fdr - False discovery rate
+npv - Negative predictive value
+acc - Accuracy
+lrm - Negative likelihood ratio (LR-)
+dor - Diagnostic odds ratio</code></pre>
+</div>
+<p>So now we have the confusion matrix for our model. We see that it does an excellent job in predicting a <code>Negative</code> Outcome but does poorly with a <code>Positive</code> Outcome. This is inherently due to the class imbalance in our dataset. This is why thresholding is an easier tactic to get our preferred model. Of course it would be better if we had balanced classes and more rows of observations in our data but this is not always a choice or reality.</p>
+<p>To see the performance of our model more coherently, we can use the following code I wrote to see it in a presentable manner.</p>
+<div class="layout-chunk" data-layout="l-body">
+
+<pre class="r"><code>
+Performance &lt;- performance(dtree_predict, measures = list(tpr,auc,mmce, acc,tnr)) %&gt;% 
+  as.data.frame(row.names = c(&quot;True Positive&quot;,&quot;Area Under Curve&quot;, &quot;Mean Misclassification Error&quot;,&quot;Accuracy&quot;,&quot;True Negative Rate&quot;)) 
+
+Performance %&gt;%  kable(caption=&quot;Performance of Decision Tree&quot;,digits = 2, format = &#39;html&#39;, col.names = &quot;Result&quot;)</code></pre>
+<table>
+<caption>
+<span id="tab:unnamed-chunk-25">Table 1: </span>Performance of Decision Tree
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+Result
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+True Positive
+</td>
+<td style="text-align:right;">
+0.50
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Area Under Curve
+</td>
+<td style="text-align:right;">
+0.72
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Mean Misclassification Error
+</td>
+<td style="text-align:right;">
+0.27
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Accuracy
+</td>
+<td style="text-align:right;">
+0.73
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+True Negative Rate
+</td>
+<td style="text-align:right;">
+0.83
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>These metrics are quite satisfactory. But we can still achieve a higher TPR as I describe below. In certain cases including this, the TPR will be the most important and not the TNR. But in my view, I need to achieve a satisfactory TNR because if not, my misclassification (error) rate will be high. I do not think that telling someone the wrong diagnosis is acceptable.</p>
+<h3 id="thresholding">Thresholding</h3>
+<div class="layout-chunk" data-layout="l-body">
+<pre class="r"><code>
+(dtree_threshold &lt;-
+generateThreshVsPerfData(dtree_predict, measures = list(tpr,auc, mmce,tnr)) %&gt;%
+plotThreshVsPerf() +
+  geom_point()
+)</code></pre>
+<p><img src="diabetes-among-the-pima-indians-supervised-learning-classification_files/figure-html5/unnamed-chunk-26-1.png" width="624" /></p>
+</div>
+<p>My personal goal for this model will be to obtain an acceptable and satisfactory <code>True Positive Rate</code> and <code>True Negative Rate</code>. Since the AUC remains the same across all thresholds we need not concern ourselves with it. By changing the threshold I am deliberately creating a biased model but this is a normal machine learning problem. The <strong>Bias-Variance Tradeoff</strong> is so common and we need to learn to navigate throught it. It is a whole other topic and anyone doing machine learning will need some knowledge of it.</p>
+<p>Below you will see 3 different thresholds:</p>
+<ul>
+<li><p>The maximum threshold in which our TPR is below 100%.</p>
+<ul>
+<li><p>The minimum threshold in which our TPR is above 80%.</p></li>
+<li><p>The average of the two thresholds.</p></li>
+<li><p>The maximum threshold in which our TNR is above 70%.</p></li>
+</ul></li>
+</ul>
+<div class="layout-chunk" data-layout="l-body">
+<pre class="r"><code>
+list(
+`TPR Threshold for 100%`  = tpr_threshold100 &lt;- 
+                            dtree_threshold$data$threshold[ 
+                              which.max(dtree_threshold$data$performance[
+                                dtree_threshold$data$measure==&quot;True positive rate&quot;]&lt;1)],
+
+`TPR Threshold for 80%` = tpr_threshold80 &lt;- 
+                           dtree_threshold$data$threshold[ 
+                             which.min(dtree_threshold$data$performance[
+                               dtree_threshold$data$measure==&quot;True positive rate&quot;]&gt;0.80)],
+
+`Average Threshold` = avg_threshold &lt;- mean(c(tpr_threshold100,tpr_threshold80)),
+
+`TNR Threshold for 80%` = tnr_threshold80 &lt;- 
+                          dtree_threshold$data$threshold[ 
+                            which.max(dtree_threshold$data$performance[
+                              dtree_threshold$data$measure==&quot;True negative rate&quot;]&gt;0.70)]
+)</code></pre>
+<p>$<code>TPR Threshold for 100%</code> [1] 0.1212121</p>
+<p>$<code>TPR Threshold for 80%</code> [1] 0.1212121</p>
+<p>$<code>Average Threshold</code> [1] 0.1212121</p>
+<p>$<code>TNR Threshold for 80%</code> [1] 0.3434343</p>
+</div>
+<p>Using <code>avg_threhsold</code> to predict on our model one more time we can get the following performance metrics. However looking at the thresholds from the plot and the ones I defined above, our True Negative Rate is going to take a big hit.</p>
+<div class="layout-chunk" data-layout="l-body">
+<pre class="r"><code>
+DecisionTree &lt;- dtree_predict %&gt;%
+                    setThreshold(avg_threshold) 
+
+(dt_performance &lt;-
+DecisionTree %&gt;% 
+  performance(measures = list(tpr,auc, mmce,tnr))
+)</code></pre>
+<pre><code>
+      tpr       auc      mmce       tnr 
+0.7800000 0.7166990 0.3856209 0.5339806 </code></pre>
+</div>
+<p>Our TPR is now . This is a huge difference from a 50/50 threshold. Our TNR has reduced to but this is a consequence of biasing our model towards the TPR. I explain below looking at the new confusion matrix.</p>
+<div class="layout-chunk" data-layout="l-body">
+<pre class="r"><code>
+(dt_cm &lt;-
+DecisionTree %&gt;% 
+  calculateROCMeasures()
+)</code></pre>
+<pre><code>
+          predicted
+true       Positive  Negative                     
+  Positive 39        11        tpr: 0.78 fnr: 0.22
+  Negative 48        55        fpr: 0.47 tnr: 0.53
+           ppv: 0.45 for: 0.17 lrp: 1.67 acc: 0.61
+           fdr: 0.55 npv: 0.83 lrm: 0.41 dor: 4.06
+
+
+Abbreviations:
+tpr - True positive rate (Sensitivity, Recall)
+fpr - False positive rate (Fall-out)
+fnr - False negative rate (Miss rate)
+tnr - True negative rate (Specificity)
+ppv - Positive predictive value (Precision)
+for - False omission rate
+lrp - Positive likelihood ratio (LR+)
+fdr - False discovery rate
+npv - Negative predictive value
+acc - Accuracy
+lrm - Negative likelihood ratio (LR-)
+dor - Diagnostic odds ratio</code></pre>
+</div>
+<p>We notice the other following changes:</p>
+<ul>
+<li><p>The TNR has reduced to 53 % due to the threshold difference.</p></li>
+<li><p>The FPR has increased to 47 %. This means that the model has an increased likedlihood of a Type 1 Error in which it will detect diabetes when it is actually absent. This is a sacrifice we needed to make to get a higher TPR.</p></li>
+<li><p>The Accuracy has reduced to 61 %. This is another consequence of changing the threshold. This is not a cause for concern because our model does what I intended for it to do - Have a high True Positive Rate. Accuracy is not an adequate measure of model performance if we only care about the accurate prediction of a certain outcome. This is the case most of the time but even then you still need to dig deep into the model performance.</p></li>
+</ul>
+<div class="layout-chunk" data-layout="l-body">
+
+<pre class="r"><code>
+Performance_threshold &lt;- performance(DecisionTree, measures = list(tpr,auc, mmce, acc, tnr)) %&gt;% 
+  as.data.frame(row.names = c(&quot;True Positive&quot;,&quot;Area Under Curve&quot;, &quot;Mean Misclassification Error&quot;,&quot;Accuracy&quot;,&quot;True Negative Rate&quot;)) 
+
+Performance_threshold %&gt;%  kable(caption=paste(&quot;Performance of Decision Tree\n\nAfter Thresholding to&quot;,(avg_threshold*100) %&gt;% round(0),&#39;%&#39;),digits = 2, format = &#39;html&#39;, col.names = &#39;RESULT&#39;)</code></pre>
+<table>
+<caption>
+<p><span id="tab:unnamed-chunk-30">Table 2: </span>Performance of Decision Tree</p>
+After Thresholding to 12 %
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+RESULT
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+True Positive
+</td>
+<td style="text-align:right;">
+0.78
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Area Under Curve
+</td>
+<td style="text-align:right;">
+0.72
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Mean Misclassification Error
+</td>
+<td style="text-align:right;">
+0.39
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Accuracy
+</td>
+<td style="text-align:right;">
+0.61
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+True Negative Rate
+</td>
+<td style="text-align:right;">
+0.53
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h1 id="links">Links</h1>
+<ul>
+<li><a href="https://cran.r-project.org/web/packages/rpart/vignettes/longintro.pdf">rpart</a></li>
+<li><a href="https://cran.r-project.org/web/packages/rpart.plot/index.html">rpart.plot</a></li>
+<li><a href="https://mlr.mlr-org.com/index.html">mlr</a></li>
+</ul>
+<!--radix_placeholder_article_footer-->
+<div class="article-footer">
+  <p class="social_footer">
+    <span class="disqus-comments">
+      <i class="fas fa-comments"></i>
+      &nbsp;
+      <span class="disqus-comment-count" data-disqus-identifier="posts/2018-11-10-diabetes-among-the-pima-indians-supervised-learning-classification/">Comment on this article</span>
+    </span>
+    <span class="article-sharing">
+      Share: &nbsp;
+      <a href="https://twitter.com/share?text=Decision%20Tree%20Classification%20of%20Diabetes%20among%20the%20Pima%20Indian%20Community%20in%20R%20using%20mlr&amp;url=https%3A%2F%2Faslm123.github.io%2Feasydsrp%2Fposts%2F2018-11-10-diabetes-among-the-pima-indians-supervised-learning-classification%2F">
+        <i class="fab fa-twitter"></i>
+      </a>
+      <a href="https://www.linkedin.com/shareArticle?mini=true&amp;url=https%3A%2F%2Faslm123.github.io%2Feasydsrp%2Fposts%2F2018-11-10-diabetes-among-the-pima-indians-supervised-learning-classification%2F&amp;title=Decision%20Tree%20Classification%20of%20Diabetes%20among%20the%20Pima%20Indian%20Community%20in%20R%20using%20mlr">
+        <i class="fab fa-linkedin"></i>
+      </a>
+      <a href="https://www.facebook.com/sharer/sharer.php?s=100&amp;p[url]=https%3A%2F%2Faslm123.github.io%2Feasydsrp%2Fposts%2F2018-11-10-diabetes-among-the-pima-indians-supervised-learning-classification%2F">
+        <i class="fab fa-facebook"></i>
+      </a>
+    </span>
+  </p>
+  <script id="dsq-count-scr" src="https://https-aslm123-github-io-easydsrp.disqus.com/count.js" async></script>
+  <div id="disqus_thread" class="hidden"></div>
+  <script>
+var disqus_config = function () {
+  this.page.url = 'https://aslm123.github.io/easydsrp/posts/2018-11-10-diabetes-among-the-pima-indians-supervised-learning-classification/';
+  this.page.identifier = 'posts/2018-11-10-diabetes-among-the-pima-indians-supervised-learning-classification/';
+};
+(function() {
+  var d = document, s = d.createElement('script');
+  s.src = 'https://https-aslm123-github-io-easydsrp.disqus.com/embed.js';
+  s.setAttribute('data-timestamp', +new Date());
+  (d.head || d.body).appendChild(s);
+})();
+</script>
+  <p>
+    <div class="subscribe"><form method='post' action='https://blogtrottr.com'>
+  <p>Enjoy this blog? Get notified of new posts via email:</p>
+  <input type='text' name='btr_email' />
+  <input type='hidden' name='btr_url'
+         value='https://aslm123.github.io/easydsrp/index.xml'/>
+  <input type='hidden' name='schedule_type' value='0' />
+  <input type='submit' value='Subscribe' />
+</form></div>
+  </p>
+</div>
+<!--/radix_placeholder_article_footer-->
+</div>
+
+<div class="d-appendix">
+</div>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+<!--radix_placeholder_site_after_body-->
+<!--/radix_placeholder_site_after_body-->
+<!--radix_placeholder_appendices-->
+<div class="appendix-bottom">
+  <h3 id="updates-and-corrections">Corrections</h3>
+  <p>If you see mistakes or want to suggest changes, please <a href="https://github.com/aslm123/easydsrp/issues/new">create an issue</a> on the source repository.</p>
+  <h3 id="reuse">Reuse</h3>
+  <p>Text and figures are licensed under Creative Commons Attribution <a rel="license" href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. Source code is available at <a href="https://github.com/aslm123/easydsrp">https://github.com/aslm123/easydsrp</a>, unless otherwise noted. The figures that have been reused from other sources don't fall under this license and can be recognized by a note in their caption: "Figure from ...".</p>
+  <h3 id="citation">Citation</h3>
+  <p>For attribution, please cite this work as</p>
+  <pre class="citation-appendix short">Mendis (2018, Nov. 10). Easy Data Science with R and Python: Decision Tree Classification of Diabetes among the Pima Indian Community in R using mlr. Retrieved from https://aslm123.github.io/easydsrp/posts/2018-11-10-diabetes-among-the-pima-indians-supervised-learning-classification/</pre>
+  <p>BibTeX citation</p>
+  <pre class="citation-appendix long">@misc{mendis2018decision,
+  author = {Mendis, Asel},
+  title = {Easy Data Science with R and Python: Decision Tree Classification of Diabetes among the Pima Indian Community in R using mlr},
+  url = {https://aslm123.github.io/easydsrp/posts/2018-11-10-diabetes-among-the-pima-indians-supervised-learning-classification/},
+  year = {2018}
+}</pre>
+</div>
+<!--/radix_placeholder_appendices-->
+<!--radix_placeholder_navigation_after_body-->
+<!--/radix_placeholder_navigation_after_body-->
+
+</body>
+
+</html>

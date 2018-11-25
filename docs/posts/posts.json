@@ -1,5 +1,28 @@
 [
   {
+    "path": "posts/2018-11-10-diabetes-among-the-pima-indians-supervised-learning-classification/",
+    "title": "Decision Tree Classification of Diabetes among the Pima Indian Community in R using mlr",
+    "description": "In my last post I conducted EDA on the Pima Indians dataset to get it ready for a suite of Machine Learning techniques. My second post will explore just that. Taking one step at a time, my incoming posts will include one Machine Learning technique showing an indepth (as indepth as I can get) look at how to conduct each technique. Lets start with Decision Trees!",
+    "author": [
+      {
+        "name": "Asel Mendis",
+        "url": {}
+      }
+    ],
+    "date": "2018-11-10",
+    "categories": [
+      "Machine Learning",
+      "Classification",
+      "Decision Tree",
+      "Supervised Learning",
+      "R"
+    ],
+    "preview": "posts/2018-11-10-diabetes-among-the-pima-indians-supervised-learning-classification/diabetes-among-the-pima-indians-supervised-learning-classification_files/figure-html5/unnamed-chunk-22-1.png",
+    "last_modified": "2018-11-25T21:37:34+11:00",
+    "preview_width": 2880,
+    "preview_height": 1248
+  },
+  {
     "path": "posts/2018-11-06-diabetes-among-the-pima-indians-an-exploratory-analysis/",
     "title": "Diabetes Among The Pima Indians: An Exploratory Analysis",
     "description": "In this post we will explore the Pima Indian dataset from the UCI repository. This post will aim to showcase different ways of thinking of your \ndata. Most novices to data science would rush into data preprocessing and not explore the data properly. The data cleaning stage can be subjective \nat times and here I offer my own view and opinons on this dataset",
