@@ -1241,7 +1241,7 @@ summary(Diabetes$Pregnancies)</code></pre>
 111 657 </code></pre>
 </div>
 <h3 id="insulin">Insulin</h3>
-50% of the rows in Insulin have 0 values. Lets look at it in a practical sense. There are times when the body produces little to no insulin which is a sign on Type 1 Diabetes. But I doubt this is the case in this instance. Insulin is such an important variable concerning Diabetes, but when a variable is just rife with missing values you have to do something about it. You can just impute the values, but this is medical data and half of the values are missing. It would not be appropriate to just impute the rows with it mean in my opininon. That’s why no matter how important it is, it has to be <strong>REMOVED</strong>. This is one of those times where you need to make a tough call.
+<p>50% of the rows in Insulin have 0 values. Lets look at it in a practical sense. There are times when the body produces little to no insulin which is a sign on Type 1 Diabetes. But I doubt this is the case in this instance. Insulin is such an important variable concerning Diabetes, but when a variable is just rife with missing values you have to do something about it. You can just impute the values, but this is medical data and half of the values are missing. It would not be appropriate to just impute the rows with it mean in my opininon. That’s why no matter how important it is, it has to be <strong>REMOVED</strong>. This is one of those times where you need to make a tough call.</p>
 <div class="layout-chunk" data-layout="l-body">
 <pre class="r"><code>
 Diabetes$Insulin &lt;- NULL
@@ -1372,7 +1372,7 @@ str(mode)</code></pre>
 <pre><code>
 function (v)  
  - attr(*, &quot;srcref&quot;)= &#39;srcref&#39; int [1:8] 1 9 4 1 9 1 1 4
-  ..- attr(*, &quot;srcfile&quot;)=Classes &#39;srcfilecopy&#39;, &#39;srcfile&#39; &lt;environment: 0x000000002085e318&gt; </code></pre>
+  ..- attr(*, &quot;srcfile&quot;)=Classes &#39;srcfilecopy&#39;, &#39;srcfile&#39; &lt;environment: 0x000000002087cd70&gt; </code></pre>
 </div>
 <h1 id="visualisation-of-variables">Visualisation of variables</h1>
 <h2 id="numeric-variables">Numeric Variables</h2>

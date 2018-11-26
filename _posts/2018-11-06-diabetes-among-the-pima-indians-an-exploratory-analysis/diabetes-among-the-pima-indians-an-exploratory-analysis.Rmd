@@ -153,13 +153,16 @@ summary(Diabetes$Pregnancies)
 ```
 
 ### Insulin
+
 50% of the rows in Insulin have 0 values. Lets look at it in a practical sense. There are times when the body produces little to no insulin which is a sign on Type 1 Diabetes. But I doubt this is the case in this instance. Insulin is such an important variable concerning Diabetes, but when a variable is just rife with missing values you have to do something about it. You can just impute the values, but this is medical data and half of the values are missing. It would not be appropriate to just impute the rows with it mean in my opininon. That's why no matter how important it is, it has to be **REMOVED**. This is one of those times where you need to make a tough call.
+
 ```{r}
 Diabetes$Insulin <- NULL
 colSums(Diabetes==0)
 ```
 
 ### Skin Thickness
+
 The same can be said for `SkinThickness`. 31% of its rows have 0 as a value. Practically how can a human have 0mm skinfold thickness. This variable is also not giving us much use. Therefore I will remove this variable as well.
 
 ```{r}
