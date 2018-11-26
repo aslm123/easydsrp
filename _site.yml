@@ -33,3 +33,4 @@ collections:
     subscribe: subscribe.html
 base_url: https://aslm123.github.io/easydsrp/
 output: radix::radix_article
+google_analytics: "UA-129818281-1"

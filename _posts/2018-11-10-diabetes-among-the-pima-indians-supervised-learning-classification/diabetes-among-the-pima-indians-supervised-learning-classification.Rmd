@@ -45,7 +45,7 @@ First let's load the relevant libraries:
 
   * `mlr` for the machine learning algorithms
   * `FSelector` for Feature Selection. (Again you can use any Feature Selection library you wish)
-  * `rpart.plot` because I want to visualize the tree and I will be using the `rpart` decis
+  * `rpart.plot` because I want to visualize the tree and I will be using the `rpart` decision tree algorithm.
 
 ```{r message=FALSE}
 library(mlr)
