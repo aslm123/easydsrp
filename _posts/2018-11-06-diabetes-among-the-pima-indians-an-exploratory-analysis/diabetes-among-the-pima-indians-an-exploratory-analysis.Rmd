@@ -1,5 +1,5 @@
 ---
-title: "R: Diabetes Among The Pima Indians: An Exploratory Analysis"
+title: "Diabetes Among The Pima Indians: An Exploratory Analysis"
 description: |
   In this post we will explore the Pima Indian dataset from the UCI repository. This post will aim to showcase different ways of thinking of your 
   data. Most novices to data science would rush into data preprocessing and not explore the data properly. The data cleaning stage can be subjective 
@@ -143,7 +143,7 @@ Row = sum(rowSums(Diabetes==0))
 A value of '0' does not necessarily mean it is a missing value. For example:
 *A woman has a zero record of pregancies because that woman has not been pregnant.*
 
-This is one example on how careful you have to be when preprocessig your data for missing values. Zero does not mean it is missing. However in additon to that point, zero values could create problems when passing it to a machine learning model. Techniques like Regression can give you an estimate of the output when the variable is zero. Anotther method of dealing with zeros could be to bin the variable which will then create a categorical variable.
+This is one example on how careful you have to be when preprocessing your data for missing values. Zero does not mean it is missing. However in addition to that point, zero values could create problems when passing it to a machine learning model. Techniques like Regression can give you an estimate of the output when the variable is zero. Another method of dealing with zeros could be to bin the variable which will then create a categorical variable.
 
 ```{r}
 Diabetes$Pregnancies <- ifelse(Diabetes$Pregnancies==0, "No", "Yes") %>% 
