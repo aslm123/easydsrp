@@ -3,7 +3,7 @@ title: "Diabetes Among The Pima Indians: An Exploratory Analysis"
 description: |
   In this post we will explore the Pima Indian dataset from the UCI repository. This post will aim to showcase different ways of thinking of your 
   data. Most novices to data science would rush into data preprocessing and not explore the data properly. The data cleaning stage can be subjective 
-  at times and here I offer my own view and opinons on this dataset
+  at times and here I offer my own view and opinions on this dataset
 author:
   - name: Asel Mendis
     url: https://www.linkedin.com/in/asel-mendis-a620399b/
@@ -154,7 +154,7 @@ summary(Diabetes$Pregnancies)
 
 ### Insulin
 
-50% of the rows in Insulin have 0 values. Lets look at it in a practical sense. There are times when the body produces little to no insulin which is a sign on Type 1 Diabetes. But I doubt this is the case in this instance. Insulin is such an important variable concerning Diabetes, but when a variable is just rife with missing values you have to do something about it. You can just impute the values, but this is medical data and half of the values are missing. It would not be appropriate to just impute the rows with it mean in my opininon. That's why no matter how important it is, it has to be **REMOVED**. This is one of those times where you need to make a tough call.
+50% of the rows in Insulin have 0 values. Lets look at it in a practical sense. There are times when the body produces little to no insulin which is a sign on Type 1 Diabetes. But I doubt this is the case in this instance. Insulin is such an important variable concerning Diabetes, but when a variable is just rife with missing values you have to do something about it. You can just impute the values, but this is medical data and half of the values are missing. It would not be appropriate to just impute the rows with its mean in my opinion. That's why no matter how important it is, it has to be **REMOVED**. This is one of those times where you need to make a tough call.
 
 ```{r}
 Diabetes$Insulin <- NULL
@@ -315,7 +315,7 @@ ggplot(Diabetes, aes(y=DiabetesPedigreeFunction, x=Outcome)) +
       stat_summary(fun.y=mean, colour="purple", 
                   geom="point", shape=16, size=5) +
       ggtitle(label="Diabetes Pedigree Function by Outcome",
-              subtitle = "Orange=Most Frequent\nPurple=Average Age") +
+              subtitle = "Orange=Most Frequent\nPurple=Average DPF") +
       theme(axis.text.x = element_text(face="bold",size=12),
             axis.text.y = element_text(face="bold",size=12),
             title = element_text(face="bold",size=12),
@@ -337,7 +337,7 @@ pregnant %>% prop.table(2) %>% round(2) %>%
   kable(format = 'html')
 ```
 
-It seems that having a pregnancy does not necessarily increase your chances of having diabetes as the same proportion of women who had or didnt have diabetes had at least one pregnancy.
+It seems that having a pregnancy does not necessarily increase your chances of having diabetes as the same proportion of women who had or didn't have diabetes had at least one pregnancy.
 
 
 ### Obesity
