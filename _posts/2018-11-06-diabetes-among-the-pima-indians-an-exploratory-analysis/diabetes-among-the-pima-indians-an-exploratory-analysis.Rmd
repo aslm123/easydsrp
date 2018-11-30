@@ -23,6 +23,8 @@ creative_commons: CC BY
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+See the article Published on [Medium](https://medium.com/@aselmendis123/easy-data-science-with-r-and-python-diabetes-among-the-pima-indians-an-exploratory-analysis-d7bc321d0fa7?source=friends_link&sk=02c9acfed5e39e0beb7068f2eecd683b)
+
 # Data
 
 The data used in the current project contains a number of diagnostic measures of type 2 diabetes in women of the Pima Indian heritage, and whether or not the individual has type 2 diabetes. The dataset was obtained from Kaggle at (https://www.kaggle.com/uciml/pima-indians-diabetes-database). There is a total of 768 observations and 9 variables. The variables in the dataset are:

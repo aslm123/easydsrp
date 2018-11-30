@@ -45,7 +45,7 @@
   <!--radix_placeholder_rmarkdown_metadata-->
   
   <script type="text/json" id="radix-rmarkdown-metadata">
-  {"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["title","description","author","date","output","categories","repository_url","creative_commons"]}},"value":[{"type":"character","attributes":{},"value":["Decision Tree Classification of Diabetes among the Pima Indian Community in R using mlr"]},{"type":"character","attributes":{},"value":["In my last post I conducted EDA on the Pima Indians dataset to get it ready for a suite of Machine Learning techniques. My second post will explore just that. Taking one step at a time, my incoming posts will include one Machine Learning technique showing an indepth (as indepth as I can get) look at how to conduct each technique. Lets start with Decision Trees!\n"]},{"type":"list","attributes":{},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name"]}},"value":[{"type":"character","attributes":{},"value":["Asel Mendis"]}]}]},{"type":"character","attributes":{},"value":["11-10-2018"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["radix::radix_article"]}},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["self_contained"]}},"value":[{"type":"logical","attributes":{},"value":[false]}]}]},{"type":"character","attributes":{},"value":["Machine Learning","Classification","Decision Tree","Supervised Learning","R"]},{"type":"character","attributes":{},"value":["https://github.com/aslm123/easydsrp"]},{"type":"character","attributes":{},"value":["CC BY"]}]}
+  {"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["title","description","author","date","output","categories","repository_url","creative_commons"]}},"value":[{"type":"character","attributes":{},"value":["Decision Tree Classification of Diabetes among the Pima Indian Community in R using mlr"]},{"type":"character","attributes":{},"value":["In my last post I conducted EDA on the Pima Indians dataset to get it ready for a suite of Machine Learning techniques. My second post will explore just that. Taking one step at a time, my incoming posts will include one Machine Learning technique showing an indepth (as indepth as I can get) look at how to conduct each technique. Lets start with Decision Trees!\n"]},{"type":"list","attributes":{},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name"]}},"value":[{"type":"character","attributes":{},"value":["Asel Mendis"]}]}]},{"type":"character","attributes":{},"value":["11-10-2018"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["radix::radix_article"]}},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["self_contained"]}},"value":[{"type":"logical","attributes":{},"value":[false]}]}]},{"type":"character","attributes":{},"value":["Machine Learning","Classification","Decision Tree","Supervised Learning","R","mlr"]},{"type":"character","attributes":{},"value":["https://github.com/aslm123/easydsrp"]},{"type":"character","attributes":{},"value":["CC BY"]}]}
   </script>
   <!--/radix_placeholder_rmarkdown_metadata-->
   
@@ -960,7 +960,7 @@
 <ul>
 <li><code>mlr</code> for the machine learning algorithms</li>
 <li><code>FSelector</code> for Feature Selection. (Again you can use any Feature Selection library you wish)</li>
-<li><code>rpart.plot</code> because I want to visualize the tree and I will be using the <code>rpart</code> decis</li>
+<li><code>rpart.plot</code> because I want to visualize the tree and I will be using the <code>rpart</code> decision tree algorithm.</li>
 </ul>
 <div class="layout-chunk" data-layout="l-body">
 <pre class="r"><code>
@@ -986,6 +986,7 @@ $ Outcome                  &lt;fct&gt; Positive, Negative, Positive, Ne...</code
 <p>I am going to work with a 80/20 train/test dataset.</p>
 <div class="layout-chunk" data-layout="l-body">
 <pre class="r"><code>
+set.seed(1000)
 train_index &lt;- sample(1:nrow(Diabetes), 0.8 * nrow(Diabetes))
 test_index &lt;- setdiff(1:nrow(Diabetes), train_index)
 
@@ -1002,39 +1003,39 @@ list(
 <pre><code>
 $train
  Pregnancies          Glucose             BMI     
- No : 87     Hyperglycemia:148   Underweight: 12  
- Yes:527     Hypoglycemia :  4   Normal     : 90  
-             Normal       :462   Overweight :137  
-                                 Obese      :375  
+ No : 76     Hyperglycemia:149   Underweight: 10  
+ Yes:538     Hypoglycemia :  5   Normal     : 95  
+             Normal       :460   Overweight :146  
+                                 Obese      :363  
                                                   
                                                   
  DiabetesPedigreeFunction      Age            Outcome   
- Min.   :0.0780           Min.   :21.00   Positive:218  
- 1st Qu.:0.2450           1st Qu.:24.00   Negative:396  
- Median :0.3755           Median :29.00                 
- Mean   :0.4788           Mean   :33.28                 
- 3rd Qu.:0.6392           3rd Qu.:41.00                 
- Max.   :2.4200           Max.   :81.00                 
+ Min.   :0.0840           Min.   :21.00   Positive:212  
+ 1st Qu.:0.2495           1st Qu.:24.00   Negative:402  
+ Median :0.3865           Median :29.00                 
+ Mean   :0.4733           Mean   :33.46                 
+ 3rd Qu.:0.6268           3rd Qu.:41.00                 
+ Max.   :2.2880           Max.   :81.00                 
 
 $test
- Pregnancies          Glucose             BMI    
- No : 24     Hyperglycemia: 44   Underweight: 3  
- Yes:130     Hypoglycemia :  1   Normal     :18  
-             Normal       :109   Overweight :43  
-                                 Obese      :90  
-                                                 
-                                                 
- DiabetesPedigreeFunction      Age           Outcome   
- Min.   :0.0880           Min.   :21.0   Positive: 50  
- 1st Qu.:0.2380           1st Qu.:24.0   Negative:104  
- Median :0.3550           Median :29.0                 
- Mean   :0.4444           Mean   :33.1                 
- 3rd Qu.:0.5830           3rd Qu.:40.0                 
- Max.   :1.7810           Max.   :66.0                 </code></pre>
+ Pregnancies          Glucose             BMI     
+ No : 35     Hyperglycemia: 43   Underweight:  5  
+ Yes:119     Hypoglycemia :  0   Normal     : 13  
+             Normal       :111   Overweight : 34  
+                                 Obese      :102  
+                                                  
+                                                  
+ DiabetesPedigreeFunction      Age            Outcome  
+ Min.   :0.0780           Min.   :21.00   Positive:56  
+ 1st Qu.:0.2263           1st Qu.:24.00   Negative:98  
+ Median :0.3455           Median :29.00                
+ Mean   :0.4663           Mean   :32.35                
+ 3rd Qu.:0.6065           3rd Qu.:39.75                
+ Max.   :2.4200           Max.   :67.00                </code></pre>
 </div>
 <ul>
-<li>The training set shows our target variable having 218 positive outcomes and 396 negative outcomes.</li>
-<li>The test set shows that we have 50 positive outcomes and 104 negative outcomes.</li>
+<li>The training set shows our target variable having 212 positive outcomes and 402 negative outcomes.</li>
+<li>The test set shows that we have 56 positive outcomes and 98 negative outcomes.</li>
 </ul>
 <p><em>There is an obvious class imbalance here with our target variable and because it is skewed towards ‘Negative’ (No Diabetes) we will find in harder to build a predictive model for a ‘Positive’ Outcome.</em></p>
 <p><em>You can solve this issue with rebalancing the classes which will involve resampling. But, I will resort adjusting the probability threshold in the prediction stage. I do not know if this would solve any underlying issues but threshold adjustment allows you to alter a prediction to give a completely different outcome.</em></p>
@@ -1057,7 +1058,7 @@ Has blocking: FALSE
 Has coordinates: FALSE
 Classes: 2
 Positive Negative 
-     218      396 
+     212      402 
 Positive class: Positive</code></pre>
 </div>
 <p>First we have to make a classification task with our training set. This is where we can define which type of machine learning problem we’re trying to solve and define the target variable.</p>
@@ -1148,10 +1149,10 @@ Aggregation: function (x, ...)  UseMethod(&quot;mean&quot;)
 Replace: TRUE
 Number of Monte-Carlo iterations: 50
 Local: FALSE
-    Pregnancies    Glucose         BMI DiabetesPedigreeFunction
-tpr           0 -0.2072477 -0.09394495              -0.06091743
+    Pregnancies    Glucose        BMI DiabetesPedigreeFunction
+tpr           0 -0.1869811 -0.1443396              -0.06339623
             Age
-tpr -0.09146789</code></pre>
+tpr -0.06896226</code></pre>
 <pre class="r"><code>
 generateFeatureImportanceData(task=dt_task, learner = dt_prob,measure = auc, interaction = FALSE)</code></pre>
 <pre><code>
@@ -1165,10 +1166,10 @@ Aggregation: function (x, ...)  UseMethod(&quot;mean&quot;)
 Replace: TRUE
 Number of Monte-Carlo iterations: 50
 Local: FALSE
-    Pregnancies   Glucose        BMI DiabetesPedigreeFunction
-auc           0 -0.164758 -0.0535525              -0.01137418
+    Pregnancies    Glucose         BMI DiabetesPedigreeFunction
+auc           0 -0.1336535 -0.07317023              -0.01907362
             Age
-auc -0.07631186</code></pre>
+auc -0.08251478</code></pre>
 </div>
 <p>As we can see with the above output: * The information gain and gain ratio show a score of zero or a low score for Pregnancies. * <code>generateFeatureImportanceData</code> shows a score of zero for Pregnancies when looking at the TPR and AUC as a performance measure.</p>
 <p>Looking at all the evidence, <code>Pregnancies</code> will be the only variable I discard. The other variables still show predictive capabilities across certain criteria.</p>
@@ -1176,6 +1177,7 @@ auc -0.07631186</code></pre>
 <p>Looking below I have taken Pregnancies out of our train and test sets and made a new classification task with our new training set.</p>
 <div class="layout-chunk" data-layout="l-body">
 <pre class="r"><code>
+set.seed(1000)
 train &lt;- select(train, -Pregnancies)
 test &lt;- select(test, -Pregnancies)</code></pre>
 </div>
@@ -1188,35 +1190,35 @@ list(
 <pre><code>
 $train
           Glucose             BMI      DiabetesPedigreeFunction
- Hyperglycemia:148   Underweight: 12   Min.   :0.0780          
- Hypoglycemia :  4   Normal     : 90   1st Qu.:0.2450          
- Normal       :462   Overweight :137   Median :0.3755          
-                     Obese      :375   Mean   :0.4788          
-                                       3rd Qu.:0.6392          
-                                       Max.   :2.4200          
+ Hyperglycemia:149   Underweight: 10   Min.   :0.0840          
+ Hypoglycemia :  5   Normal     : 95   1st Qu.:0.2495          
+ Normal       :460   Overweight :146   Median :0.3865          
+                     Obese      :363   Mean   :0.4733          
+                                       3rd Qu.:0.6268          
+                                       Max.   :2.2880          
       Age            Outcome   
- Min.   :21.00   Positive:218  
- 1st Qu.:24.00   Negative:396  
+ Min.   :21.00   Positive:212  
+ 1st Qu.:24.00   Negative:402  
  Median :29.00                 
- Mean   :33.28                 
+ Mean   :33.46                 
  3rd Qu.:41.00                 
  Max.   :81.00                 
 
 $test
-          Glucose             BMI     DiabetesPedigreeFunction
- Hyperglycemia: 44   Underweight: 3   Min.   :0.0880          
- Hypoglycemia :  1   Normal     :18   1st Qu.:0.2380          
- Normal       :109   Overweight :43   Median :0.3550          
-                     Obese      :90   Mean   :0.4444          
-                                      3rd Qu.:0.5830          
-                                      Max.   :1.7810          
-      Age           Outcome   
- Min.   :21.0   Positive: 50  
- 1st Qu.:24.0   Negative:104  
- Median :29.0                 
- Mean   :33.1                 
- 3rd Qu.:40.0                 
- Max.   :66.0                 </code></pre>
+          Glucose             BMI      DiabetesPedigreeFunction
+ Hyperglycemia: 43   Underweight:  5   Min.   :0.0780          
+ Hypoglycemia :  0   Normal     : 13   1st Qu.:0.2263          
+ Normal       :111   Overweight : 34   Median :0.3455          
+                     Obese      :102   Mean   :0.4663          
+                                       3rd Qu.:0.6065          
+                                       Max.   :2.4200          
+      Age            Outcome  
+ Min.   :21.00   Positive:56  
+ 1st Qu.:24.00   Negative:98  
+ Median :29.00                
+ Mean   :32.35                
+ 3rd Qu.:39.75                
+ Max.   :67.00                </code></pre>
 </div>
 <p>Another problem is that in the Glucose category, ‘Hypoglycemia’ has only 5 representations in the whole dataset. When we go for cross validation this will be an issue because almost definitely this level will absent in any of the folds. This will disallow the model to be properly trained later. Therefore we need to remove Hypoglycemia from both datsets:</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -1233,35 +1235,35 @@ list(
 <pre><code>
 $train
           Glucose             BMI      DiabetesPedigreeFunction
- Hyperglycemia:148   Underweight: 12   Min.   :0.0780          
- Normal       :462   Normal     : 89   1st Qu.:0.2450          
-                     Overweight :137   Median :0.3755          
-                     Obese      :372   Mean   :0.4793          
-                                       3rd Qu.:0.6392          
-                                       Max.   :2.4200          
+ Hyperglycemia:149   Underweight: 10   Min.   :0.084           
+ Normal       :460   Normal     : 94   1st Qu.:0.249           
+                     Overweight :145   Median :0.388           
+                     Obese      :360   Mean   :0.474           
+                                       3rd Qu.:0.627           
+                                       Max.   :2.288           
       Age           Outcome   
- Min.   :21.0   Positive:216  
- 1st Qu.:24.0   Negative:394  
+ Min.   :21.0   Positive:210  
+ 1st Qu.:24.0   Negative:399  
  Median :29.0                 
- Mean   :33.3                 
+ Mean   :33.5                 
  3rd Qu.:41.0                 
  Max.   :81.0                 
 
 $test
-          Glucose             BMI     DiabetesPedigreeFunction
- Hyperglycemia: 44   Underweight: 3   Min.   :0.0880          
- Normal       :109   Normal     :18   1st Qu.:0.2380          
-                     Overweight :42   Median :0.3580          
-                     Obese      :90   Mean   :0.4454          
-                                      3rd Qu.:0.5830          
-                                      Max.   :1.7810          
-      Age            Outcome   
- Min.   :21.00   Positive: 50  
- 1st Qu.:24.00   Negative:103  
- Median :29.00                 
- Mean   :33.18                 
- 3rd Qu.:40.00                 
- Max.   :66.00                 </code></pre>
+          Glucose             BMI      DiabetesPedigreeFunction
+ Hyperglycemia: 43   Underweight:  5   Min.   :0.0780          
+ Normal       :111   Normal     : 13   1st Qu.:0.2263          
+                     Overweight : 34   Median :0.3455          
+                     Obese      :102   Mean   :0.4663          
+                                       3rd Qu.:0.6065          
+                                       Max.   :2.4200          
+      Age            Outcome  
+ Min.   :21.00   Positive:56  
+ 1st Qu.:24.00   Negative:98  
+ Median :29.00                
+ Mean   :32.35                
+ 3rd Qu.:39.75                
+ Max.   :67.00                </code></pre>
 </div>
 <p>As we now have new datasets we need to make a new classification task based on the new training set.</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -1271,7 +1273,7 @@ $test
 Supervised task: train
 Type: classif
 Target: Outcome
-Observations: 610
+Observations: 609
 Features:
    numerics     factors     ordered functionals 
           2           2           0           0 
@@ -1281,7 +1283,7 @@ Has blocking: FALSE
 Has coordinates: FALSE
 Classes: 2
 Positive Negative 
-     216      394 
+     210      399 
 Positive class: Positive</code></pre>
 </div>
 <h2 id="hyper-parameter-tuning">Hyper Parameter Tuning</h2>
@@ -1373,6 +1375,7 @@ rdesc = makeResampleDesc(&quot;CV&quot;, iters = 3L, stratify=TRUE)</code></pre>
 <p>In <code>measures</code> you can define which performance criteria you would like to see. I also want to get the standard deviation of the True Positive Rate from the test set during the cross validation. This added measure should give us an indication of how large the spread is between each fold for this measure.</p>
 <div class="layout-chunk" data-layout="l-body">
 <pre class="r"><code>
+set.seed(1000)
 (dt_tuneparam &lt;- tuneParams(learner=dt_prob,
                            resampling=rdesc,
                            measures=list(tpr,auc, fnr, mmce, tnr, setAggregation(tpr, test.sd)),
@@ -1383,11 +1386,11 @@ rdesc = makeResampleDesc(&quot;CV&quot;, iters = 3L, stratify=TRUE)</code></pre>
 )</code></pre>
 <pre><code>
 Tune result:
-Op. pars: minsplit=9; minbucket=3; cp=0.01; maxcompete=6; usesurrogate=0; maxdepth=10
-tpr.test.mean=0.5925926,auc.test.mean=0.7851470,fnr.test.mean=0.4074074,mmce.test.mean=0.2507969,tnr.test.mean=0.8350104,tpr.test.sd=0.0561313</code></pre>
+Op. pars: minsplit=9; minbucket=2; cp=0.0144; maxcompete=6; usesurrogate=0; maxdepth=10
+tpr.test.mean=0.6095238,auc.test.mean=0.7807376,fnr.test.mean=0.3904762,mmce.test.mean=0.2725780,tnr.test.mean=0.7894737,tpr.test.sd=0.0704698</code></pre>
 </div>
 <p>Upon running the tuner, we see the 120 possible combinations of the hyparameters we set. The final result at the bottom of the output (i.e <code>[Tune] Result:...)</code> gives us our optimal combination. This will change everytime you run it. As long as you can see similar performance results there should be no danger in going ahead with the current dataset. If the performance results begin to diverge too much, the data may be inadequate.</p>
-<p>In the optimal hyperparameters, the standard deviation of the True Positive Rate in the test set is 0.0561313, which is relatively low and can give us an idea of the True Positive Rate we will obtain later when predicting. If the TPR from the prediction is close or in-between 1 standard deviation from the one obtained during cross validation, it is another indication that our model works well.</p>
+<p>In the optimal hyperparameters, the standard deviation of the True Positive Rate in the test set is 0.0704698, which is relatively low and can give us an idea of the True Positive Rate we will obtain later when predicting. If the TPR from the prediction is close or in-between 1 standard deviation from the one obtained during cross validation, it is another indication that our model works well.</p>
 <p><strong>NOTE</strong> <code>tuneParams</code> knows which performance measure to minimize and maximize. So for example, it knows to maximize accuracy and minimize error rate (mmce).</p>
 <p><br> On a side not as I mentioned earlier, I defined a large search space and it took about 4 hours to finish and ended up with 100,000 combnations. This was the result:</p>
 <blockquote>
@@ -1407,10 +1410,10 @@ $`Optimal HyperParameters`$minsplit
 [1] 9
 
 $`Optimal HyperParameters`$minbucket
-[1] 3
+[1] 2
 
 $`Optimal HyperParameters`$cp
-[1] 0.01
+[1] 0.01444444
 
 $`Optimal HyperParameters`$maxcompete
 [1] 6
@@ -1424,9 +1427,9 @@ $`Optimal HyperParameters`$maxdepth
 
 $`Optimal Metrics`
  tpr.test.mean  auc.test.mean  fnr.test.mean mmce.test.mean 
-    0.59259259     0.78514698     0.40740741     0.25079687 
+    0.60952381     0.78073756     0.39047619     0.27257800 
  tnr.test.mean    tpr.test.sd 
-    0.83501041     0.05613128 </code></pre>
+    0.78947368     0.07046976 </code></pre>
 </div>
 <p>Using <code>dt_tuneparam$x</code> we can extract the optimal values and <code>dt_tuneparam$y</code> gives us the corresponding performance measures.</p>
 <p><code>setHyperPars</code> will tune the learner with its optimal values.</p>
@@ -1438,67 +1441,60 @@ dtree &lt;- setHyperPars(dt_prob, par.vals = dt_tuneparam$x)</code></pre>
 <p>We finally get to the stage of training our learner.</p>
 <div class="layout-chunk" data-layout="l-screen-inset">
 <pre class="r"><code>
+set.seed(1000)
 dtree_train &lt;- train(learner=dtree, task=dt_task)
 getLearnerModel(dtree_train)</code></pre>
 <pre><code>
-n= 610 
+n= 609 
 
 node), split, n, loss, yval, (yprob)
       * denotes terminal node
 
- 1) root 610 216 Negative (0.35409836 0.64590164)  
-   2) Glucose=Hyperglycemia 148  40 Positive (0.72972973 0.27027027)  
-     4) BMI=Obese 117  25 Positive (0.78632479 0.21367521) *
-     5) BMI=Normal,Overweight 31  15 Positive (0.51612903 0.48387097)  
-      10) Age&gt;=41 12   3 Positive (0.75000000 0.25000000) *
-      11) Age&lt; 41 19   7 Negative (0.36842105 0.63157895) *
-   3) Glucose=Normal 462 108 Negative (0.23376623 0.76623377)  
-     6) Age&gt;=28.5 212  80 Negative (0.37735849 0.62264151)  
-      12) BMI=Underweight,Overweight,Obese 186  79 Negative (0.42473118 0.57526882)  
-        24) DiabetesPedigreeFunction&gt;=0.5275 65  27 Positive (0.58461538 0.41538462)  
-          48) Age&gt;=42.5 24   7 Positive (0.70833333 0.29166667) *
-          49) Age&lt; 42.5 41  20 Positive (0.51219512 0.48780488)  
-            98) Age&lt; 33.5 23   8 Positive (0.65217391 0.34782609) *
-            99) Age&gt;=33.5 18   6 Negative (0.33333333 0.66666667) *
-        25) DiabetesPedigreeFunction&lt; 0.5275 121  41 Negative (0.33884298 0.66115702) *
-      13) BMI=Normal 26   1 Negative (0.03846154 0.96153846) *
-     7) Age&lt; 28.5 250  28 Negative (0.11200000 0.88800000) *</code></pre>
+ 1) root 609 210 Negative (0.34482759 0.65517241)  
+   2) Glucose=Hyperglycemia 149  46 Positive (0.69127517 0.30872483)  
+     4) BMI=Obese 117  28 Positive (0.76068376 0.23931624) *
+     5) BMI=Normal,Overweight 32  14 Negative (0.43750000 0.56250000) *
+   3) Glucose=Normal 460 107 Negative (0.23260870 0.76739130)  
+     6) Age&gt;=28.5 215  78 Negative (0.36279070 0.63720930)  
+      12) BMI=Underweight,Overweight,Obese 184  77 Negative (0.41847826 0.58152174)  
+        24) DiabetesPedigreeFunction&gt;=0.5275 61  23 Positive (0.62295082 0.37704918) *
+        25) DiabetesPedigreeFunction&lt; 0.5275 123  39 Negative (0.31707317 0.68292683) *
+      13) BMI=Normal 31   1 Negative (0.03225806 0.96774194) *
+     7) Age&lt; 28.5 245  29 Negative (0.11836735 0.88163265) *</code></pre>
 <pre class="r"><code>
 rpart.plot(dtree_train$learner.model, roundint=FALSE, varlen=3, type = 3, clip.right.labs = FALSE, yesno = 2)</code></pre>
 <p><img src="diabetes-among-the-pima-indians-supervised-learning-classification_files/figure-html5/unnamed-chunk-22-1.png" width="1440" data-radix-preview=1 /></p>
 <pre class="r"><code>
 rpart.rules(dtree_train$learner.model, roundint = FALSE)</code></pre>
 <pre><code>
- Outcome                                                                                                                               
-    0.21 when Glucose is Hyperglycemia                   &amp; BMI is                              Obese                                   
-    0.25 when Glucose is Hyperglycemia &amp; Age &gt;=       41 &amp; BMI is               Normal or Overweight                                   
-    0.29 when Glucose is        Normal &amp; Age &gt;=       43 &amp; BMI is Underweight or Overweight or Obese &amp; DiabetesPedigreeFunction &gt;= 0.53
-    0.35 when Glucose is        Normal &amp; Age is 29 to 34 &amp; BMI is Underweight or Overweight or Obese &amp; DiabetesPedigreeFunction &gt;= 0.53
-    0.63 when Glucose is Hyperglycemia &amp; Age &lt;  41       &amp; BMI is               Normal or Overweight                                   
-    0.66 when Glucose is        Normal &amp; Age &gt;=       29 &amp; BMI is Underweight or Overweight or Obese &amp; DiabetesPedigreeFunction &lt;  0.53
-    0.67 when Glucose is        Normal &amp; Age is 34 to 43 &amp; BMI is Underweight or Overweight or Obese &amp; DiabetesPedigreeFunction &gt;= 0.53
-    0.89 when Glucose is        Normal &amp; Age &lt;  29                                                                                     
-    0.96 when Glucose is        Normal &amp; Age &gt;=       29 &amp; BMI is                             Normal                                   </code></pre>
+ Outcome                                                                                                                         
+    0.24 when Glucose is Hyperglycemia &amp; BMI is                              Obese                                               
+    0.38 when Glucose is        Normal &amp; BMI is Underweight or Overweight or Obese &amp; Age &gt;= 29 &amp; DiabetesPedigreeFunction &gt;= 0.53
+    0.56 when Glucose is Hyperglycemia &amp; BMI is               Normal or Overweight                                               
+    0.68 when Glucose is        Normal &amp; BMI is Underweight or Overweight or Obese &amp; Age &gt;= 29 &amp; DiabetesPedigreeFunction &lt;  0.53
+    0.88 when Glucose is        Normal                                             &amp; Age &lt;  29                                   
+    0.97 when Glucose is        Normal &amp; BMI is                             Normal &amp; Age &gt;= 29                                   </code></pre>
 </div>
 <p>After training the decision tree I was able to plot it with the <code>rpart.plot</code> function and I can easily see the rules of the tree with <code>rpart.rules</code>. Since <code>mlr</code> is a wrapper for machine learning algorithms I can customize to my likinig and this is just one example.</p>
 <h2 id="model-prediction-testing">Model Prediction (Testing)</h2>
 <p>We now pass the trained learner to be used to make predictions with our test data.</p>
 <div class="layout-chunk" data-layout="l-body">
 <pre class="r"><code>
+set.seed(1000)
 (dtree_predict &lt;- predict(dtree_train, newdata = test))</code></pre>
 <pre><code>
-Prediction: 153 observations
+Prediction: 154 observations
 predict.type: prob
 threshold: Positive=0.50,Negative=0.50
 time: 0.00
      truth prob.Positive prob.Negative response
-1 Negative      0.338843      0.661157 Negative
-2 Negative      0.338843      0.661157 Negative
-3 Positive      0.112000      0.888000 Negative
-4 Negative      0.338843      0.661157 Negative
-5 Positive      0.338843      0.661157 Negative
-6 Negative      0.338843      0.661157 Negative
-... (#rows: 153, #cols: 4)</code></pre>
+1 Negative     0.3170732     0.6829268 Negative
+2 Positive     0.6229508     0.3770492 Positive
+3 Negative     0.4375000     0.5625000 Negative
+4 Negative     0.3170732     0.6829268 Negative
+5 Positive     0.7606838     0.2393162 Positive
+6 Negative     0.1183673     0.8816327 Negative
+... (#rows: 154, #cols: 4)</code></pre>
 </div>
 <p>We get 6 random rows showing the predicted outcome against the actual outcome with its respective probability score for both <code>Positive</code> and <code>Negative</code>. Th threshold for classifying each row is 50/50. This is by default but can be changed later (which I will do).</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -1507,11 +1503,11 @@ dtree_predict %&gt;%
   calculateROCMeasures()</code></pre>
 <pre><code>
           predicted
-true       Positive Negative                     
-  Positive 25       25        tpr: 0.5  fnr: 0.5 
-  Negative 17       86        fpr: 0.17 tnr: 0.83
-           ppv: 0.6 for: 0.23 lrp: 3.03 acc: 0.73
-           fdr: 0.4 npv: 0.77 lrm: 0.6  dor: 5.06
+true       Positive  Negative                     
+  Positive 30        26        tpr: 0.54 fnr: 0.46
+  Negative 14        84        fpr: 0.14 tnr: 0.86
+           ppv: 0.68 for: 0.24 lrp: 3.75 acc: 0.74
+           fdr: 0.32 npv: 0.76 lrm: 0.54 dor: 6.92
 
 
 Abbreviations:
@@ -1556,7 +1552,7 @@ Result
 True Positive
 </td>
 <td style="text-align:right;">
-0.50
+0.54
 </td>
 </tr>
 <tr>
@@ -1564,7 +1560,7 @@ True Positive
 Area Under Curve
 </td>
 <td style="text-align:right;">
-0.72
+0.77
 </td>
 </tr>
 <tr>
@@ -1572,7 +1568,7 @@ Area Under Curve
 Mean Misclassification Error
 </td>
 <td style="text-align:right;">
-0.27
+0.26
 </td>
 </tr>
 <tr>
@@ -1580,7 +1576,7 @@ Mean Misclassification Error
 Accuracy
 </td>
 <td style="text-align:right;">
-0.73
+0.74
 </td>
 </tr>
 <tr>
@@ -1588,7 +1584,7 @@ Accuracy
 True Negative Rate
 </td>
 <td style="text-align:right;">
-0.83
+0.86
 </td>
 </tr>
 </tbody>
@@ -1636,9 +1632,9 @@ list(
                               dtree_threshold$data$measure==&quot;True negative rate&quot;]&gt;0.70)]
 )</code></pre>
 <p>$<code>TPR Threshold for 100%</code> [1] 0.1212121</p>
-<p>$<code>TPR Threshold for 80%</code> [1] 0.1212121</p>
-<p>$<code>Average Threshold</code> [1] 0.1212121</p>
-<p>$<code>TNR Threshold for 80%</code> [1] 0.3434343</p>
+<p>$<code>TPR Threshold for 80%</code> [1] 0.3232323</p>
+<p>$<code>Average Threshold</code> [1] 0.2222222</p>
+<p>$<code>TNR Threshold for 80%</code> [1] 0.3232323</p>
 </div>
 <p>Using <code>avg_threhsold</code> to predict on our model one more time we can get the following performance metrics. However looking at the thresholds from the plot and the ones I defined above, our True Negative Rate is going to take a big hit.</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -1652,7 +1648,7 @@ DecisionTree %&gt;%
 )</code></pre>
 <pre><code>
       tpr       auc      mmce       tnr 
-0.7800000 0.7166990 0.3856209 0.5339806 </code></pre>
+0.8214286 0.7693149 0.3376623 0.5714286 </code></pre>
 </div>
 <p>Our TPR is now . This is a huge difference from a 50/50 threshold. Our TNR has reduced to but this is a consequence of biasing our model towards the TPR. I explain below looking at the new confusion matrix.</p>
 <div class="layout-chunk" data-layout="l-body">
@@ -1664,10 +1660,10 @@ DecisionTree %&gt;%
 <pre><code>
           predicted
 true       Positive  Negative                     
-  Positive 39        11        tpr: 0.78 fnr: 0.22
-  Negative 48        55        fpr: 0.47 tnr: 0.53
-           ppv: 0.45 for: 0.17 lrp: 1.67 acc: 0.61
-           fdr: 0.55 npv: 0.83 lrm: 0.41 dor: 4.06
+  Positive 46        10        tpr: 0.82 fnr: 0.18
+  Negative 42        56        fpr: 0.43 tnr: 0.57
+           ppv: 0.52 for: 0.15 lrp: 1.92 acc: 0.66
+           fdr: 0.48 npv: 0.85 lrm: 0.31 dor: 6.13
 
 
 Abbreviations:
@@ -1686,9 +1682,9 @@ dor - Diagnostic odds ratio</code></pre>
 </div>
 <p>We notice the other following changes:</p>
 <ul>
-<li><p>The TNR has reduced to 53 % due to the threshold difference.</p></li>
-<li><p>The FPR has increased to 47 %. This means that the model has an increased likedlihood of a Type 1 Error in which it will detect diabetes when it is actually absent. This is a sacrifice we needed to make to get a higher TPR.</p></li>
-<li><p>The Accuracy has reduced to 61 %. This is another consequence of changing the threshold. This is not a cause for concern because our model does what I intended for it to do - Have a high True Positive Rate. Accuracy is not an adequate measure of model performance if we only care about the accurate prediction of a certain outcome. This is the case most of the time but even then you still need to dig deep into the model performance.</p></li>
+<li><p>The TNR has reduced to 57 % due to the threshold difference.</p></li>
+<li><p>The FPR has increased to 43 %. This means that the model has an increased likedlihood of a Type 1 Error in which it will detect diabetes when it is actually absent. This is a sacrifice we needed to make to get a higher TPR.</p></li>
+<li><p>The Accuracy has reduced to 66 %. This is another consequence of changing the threshold. This is not a cause for concern because our model does what I intended for it to do - Have a high True Positive Rate. Accuracy is not an adequate measure of model performance if we only care about the accurate prediction of a certain outcome. This is the case most of the time but even then you still need to dig deep into the model performance.</p></li>
 </ul>
 <div class="layout-chunk" data-layout="l-body">
 
@@ -1700,7 +1696,7 @@ Performance_threshold %&gt;%  kable(caption=paste(&quot;Performance of Decision 
 <table>
 <caption>
 <p><span id="tab:unnamed-chunk-30">Table 2: </span>Performance of Decision Tree</p>
-After Thresholding to 12 %
+After Thresholding to 22 %
 </caption>
 <thead>
 <tr>
@@ -1717,7 +1713,7 @@ RESULT
 True Positive
 </td>
 <td style="text-align:right;">
-0.78
+0.82
 </td>
 </tr>
 <tr>
@@ -1725,7 +1721,7 @@ True Positive
 Area Under Curve
 </td>
 <td style="text-align:right;">
-0.72
+0.77
 </td>
 </tr>
 <tr>
@@ -1733,7 +1729,7 @@ Area Under Curve
 Mean Misclassification Error
 </td>
 <td style="text-align:right;">
-0.39
+0.34
 </td>
 </tr>
 <tr>
@@ -1741,7 +1737,7 @@ Mean Misclassification Error
 Accuracy
 </td>
 <td style="text-align:right;">
-0.61
+0.66
 </td>
 </tr>
 <tr>
@@ -1749,7 +1745,7 @@ Accuracy
 True Negative Rate
 </td>
 <td style="text-align:right;">
-0.53
+0.57
 </td>
 </tr>
 </tbody>

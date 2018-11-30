@@ -15,10 +15,11 @@
       "Classification",
       "Decision Tree",
       "Supervised Learning",
-      "R"
+      "R",
+      "mlr"
     ],
     "preview": "posts/2018-11-10-diabetes-among-the-pima-indians-supervised-learning-classification/diabetes-among-the-pima-indians-supervised-learning-classification_files/figure-html5/unnamed-chunk-22-1.png",
-    "last_modified": "2018-11-25T21:37:34+11:00",
+    "last_modified": "2018-11-30T16:38:09+11:00",
     "preview_width": 2880,
     "preview_height": 1248
   },
@@ -39,7 +40,7 @@
       "R"
     ],
     "preview": "posts/2018-11-06-diabetes-among-the-pima-indians-an-exploratory-analysis/diabetes-among-the-pima-indians-an-exploratory-analysis_files/figure-html5/unnamed-chunk-14-1.png",
-    "last_modified": "2018-11-28T17:33:05+11:00",
+    "last_modified": "2018-11-30T16:31:12+11:00",
     "preview_width": 1248,
     "preview_height": 768
   }

@@ -14,6 +14,7 @@ categories:
   - Decision Tree
   - Supervised Learning
   - R 
+  - mlr
 repository_url: https://github.com/aslm123/easydsrp
 creative_commons: CC BY
 ---
@@ -51,7 +52,6 @@ First let's load the relevant libraries:
 library(mlr)
 library(FSelector)
 library(rpart.plot)
-
 ```
 
 
@@ -67,6 +67,7 @@ A look at the dataset I worked on in my [previous post](https://aslm123.github.i
 I am going to work with a 80/20 train/test dataset. 
 
 ```{r}
+set.seed(1000)
 train_index <- sample(1:nrow(Diabetes), 0.8 * nrow(Diabetes))
 test_index <- setdiff(1:nrow(Diabetes), train_index)
 
@@ -144,6 +145,7 @@ Looking at all the evidence, `Pregnancies` will be the only variable I discard. 
 Looking below I have taken Pregnancies out of our train and test sets and made a new classification task with our new training set.
 
 ```{r}
+set.seed(1000)
 train <- select(train, -Pregnancies)
 test <- select(test, -Pregnancies)
 ```
@@ -273,6 +275,7 @@ We can now use `tuneParams` to show us what combination of hyperparameter values
 In `measures` you can define which performance criteria you would like to see. I also want to get the standard deviation of the True Positive Rate from the test set during the cross validation. This added measure should give us an indication of how large the spread is between each fold for this measure.
 
 ```{r}
+set.seed(1000)
 (dt_tuneparam <- tuneParams(learner=dt_prob,
                            resampling=rdesc,
                            measures=list(tpr,auc, fnr, mmce, tnr, setAggregation(tpr, test.sd)),
@@ -323,6 +326,7 @@ dtree <- setHyperPars(dt_prob, par.vals = dt_tuneparam$x)
 We finally get to the stage of training our learner.
 
 ```{r fig.height=6.5, fig.width=15, preview=TRUE, layout="l-screen-inset"}
+set.seed(1000)
 dtree_train <- train(learner=dtree, task=dt_task)
 getLearnerModel(dtree_train)
 rpart.plot(dtree_train$learner.model, roundint=FALSE, varlen=3, type = 3, clip.right.labs = FALSE, yesno = 2)
@@ -337,6 +341,7 @@ After training the decision tree I was able to plot it with the `rpart.plot` fun
 We now pass the trained learner to be used to make predictions with our test data. 
 
 ```{r}
+set.seed(1000)
 (dtree_predict <- predict(dtree_train, newdata = test))
 ```
 

@@ -24,6 +24,8 @@ navbar:
       href: https://www.linkedin.com/in/asel-mendis-a620399b
     - icon: fa fa-envelope-o
       href: mailto:aselmendis123@gmail.com
+    - icon: fa fa-medium
+      href: https://medium.com/@aselmendis123
 collections:
   posts:
     disqus: https-aslm123-github-io-easydsrp
@@ -31,6 +33,6 @@ collections:
     share: [twitter, linkedin, facebook]
     feed_item_max: false
     subscribe: subscribe.html
-base_url: https://aslm123.github.io/easydsrp/
+base_url: https://easydsrp.com/
 output: radix::radix_article
 google_analytics: "UA-129818281-1"
