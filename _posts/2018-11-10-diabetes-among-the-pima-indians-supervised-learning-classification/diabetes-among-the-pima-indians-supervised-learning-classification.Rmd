@@ -5,6 +5,8 @@ description: |
 author:
   - name: "Asel Mendis"
     url: https://www.linkedin.com/in/asel-mendis-a620399b/
+    affiliation: Medium
+    affiliation_url: https://medium.com/@aselmendis123
 date: 11-10-2018
 output:
   radix::radix_article:
@@ -370,7 +372,7 @@ To see the performance of our model more coherently, we can use the following co
 
 ```{r}
 Performance <- performance(dtree_predict, measures = list(tpr,auc,mmce, acc,tnr)) %>% 
-  as.data.frame(row.names = c("True Positive","Area Under Curve", "Mean Misclassification Error","Accuracy","True Negative Rate")) 
+  as.data.frame(row.names = c("True Positive","Area Under Curve", "Mean Misclassification Error","Accuracy","True Negative")) 
 
 Performance %>%  kable(caption="Performance of Decision Tree",digits = 2, format = 'html', col.names = "Result")
 ```
@@ -461,7 +463,9 @@ We notice the other following changes:
 Performance_threshold <- performance(DecisionTree, measures = list(tpr,auc, mmce, acc, tnr)) %>% 
   as.data.frame(row.names = c("True Positive","Area Under Curve", "Mean Misclassification Error","Accuracy","True Negative")) 
 
-Performance_threshold %>%  kable(caption=paste("Performance of Decision Tree\n\nAfter Thresholding to",(avg_threshold*100) %>% round(0),'%'),digits = 2, format = 'html', col.names = 'RESULT')
+Performance_threshold %>%  
+	kable(caption=paste("Performance of Decision Tree\n\nAfter Thresholding to",(avg_threshold*100) %>% round(0),'%'), 
+		digits = 2, format = 'html', col.names = 'RESULT')
 ```
 We can see our new performance metrics after changing the classification threshold. Thresholding is very subjective to the user and the domain of the problem. Sometimes it will be necessary to skew the model's performance in one direction depending on the cost of misclassification for you. In this scenario, there will be many false positives for patients but if the cost of misclassifying these patients is not too high, it is worthy of obtaining higher likelihoods of a correct diagnosis (i.e. True Positives). 
 
