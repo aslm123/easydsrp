@@ -45,7 +45,7 @@
   <!--radix_placeholder_rmarkdown_metadata-->
   
   <script type="text/json" id="radix-rmarkdown-metadata">
-  {"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["title","description","author","date","output","categories","repository_url","creative_commons"]}},"value":[{"type":"character","attributes":{},"value":["Diabetes Among The Pima Indians: An Exploratory Analysis"]},{"type":"character","attributes":{},"value":["In this post we will explore the Pima Indian dataset from the UCI repository. This post will aim to showcase different ways of thinking of your \ndata. Most novices to data science would rush into data preprocessing and not explore the data properly. The data cleaning stage can be subjective \nat times and here I offer my own view and opinions on this dataset\n"]},{"type":"list","attributes":{},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","url"]}},"value":[{"type":"character","attributes":{},"value":["Asel Mendis"]},{"type":"character","attributes":{},"value":["https://www.linkedin.com/in/asel-mendis-a620399b/"]}]}]},{"type":"character","attributes":{},"value":["11-06-2018"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["radix::radix_article"]}},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["self_contained"]}},"value":[{"type":"logical","attributes":{},"value":[false]}]}]},{"type":"character","attributes":{},"value":["Data Preprocessing","Exploratory Analysis","R"]},{"type":"character","attributes":{},"value":["https://github.com/aslm123/easydsrp"]},{"type":"character","attributes":{},"value":["CC BY"]}]}
+  {"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["title","description","author","date","output","categories","repository_url","creative_commons"]}},"value":[{"type":"character","attributes":{},"value":["Diabetes Among The Pima Indians: An Exploratory Analysis"]},{"type":"character","attributes":{},"value":["In this post we will explore the Pima Indian dataset from the UCI repository. This post will aim to showcase different ways of thinking of your \ndata. Most novices to data science would rush into data preprocessing and not explore the data properly. The data cleaning stage can be subjective \nat times and here I offer my own view and opinions on this dataset\n"]},{"type":"list","attributes":{},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","url"]}},"value":[{"type":"character","attributes":{},"value":["Asel Mendis"]},{"type":"character","attributes":{},"value":["https://www.linkedin.com/in/asel-mendis-a620399b/"]}]}]},{"type":"character","attributes":{},"value":["11-06-2018"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["radix::radix_article"]}},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["self_contained","toc","toc_depth"]}},"value":[{"type":"logical","attributes":{},"value":[false]},{"type":"logical","attributes":{},"value":[true]},{"type":"integer","attributes":{},"value":[3]}]}]},{"type":"character","attributes":{},"value":["Data Preprocessing","Exploratory Analysis","R"]},{"type":"character","attributes":{},"value":["https://github.com/aslm123/easydsrp"]},{"type":"character","attributes":{},"value":["CC BY"]}]}
   </script>
   <!--/radix_placeholder_rmarkdown_metadata-->
   
@@ -955,6 +955,40 @@
 </div>
 
 <div class="d-article">
+<h3 class="d-toc-header">Table of Contents</h3>
+<nav class="d-toc" id="TOC">
+<ul>
+<li><a href="#data">Data</a><ul>
+<li><a href="#preprocessing">Preprocessing</a></li>
+<li><a href="#overview">Overview</a></li>
+<li><a href="#type-conversions">Type Conversions</a><ul>
+<li><a href="#factors">Factors</a></li>
+<li><a href="#numeric">Numeric</a></li>
+</ul></li>
+<li><a href="#dealing-with-missing-values">Dealing with Missing Values</a><ul>
+<li><a href="#pregnancies">Pregnancies</a></li>
+<li><a href="#insulin">Insulin</a></li>
+<li><a href="#skin-thickness">Skin Thickness</a></li>
+<li><a href="#bmi">BMI</a></li>
+<li><a href="#glucose">Glucose</a></li>
+</ul></li>
+<li><a href="#blood-pressure">Blood Pressure</a></li>
+</ul></li>
+<li><a href="#visualisation-of-variables">Visualisation of variables</a><ul>
+<li><a href="#numeric-variables">Numeric Variables</a><ul>
+<li><a href="#age">Age</a></li>
+<li><a href="#diabetes-pedigree-function">Diabetes Pedigree Function</a></li>
+</ul></li>
+<li><a href="#categorical-variables-of-outcome">Categorical Variables (% of Outcome)</a><ul>
+<li><a href="#pregnancies-1">Pregnancies</a></li>
+<li><a href="#obesity">Obesity</a></li>
+<li><a href="#glucose-1">Glucose</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#final-data">Final Data</a></li>
+</ul>
+</nav>
+<hr class="d-toc-separator"/>
 <p>See the article Published on <a href="https://medium.com/@aselmendis123/easy-data-science-with-r-and-python-diabetes-among-the-pima-indians-an-exploratory-analysis-d7bc321d0fa7?source=friends_link&amp;sk=02c9acfed5e39e0beb7068f2eecd683b">Medium</a></p>
 <h1 id="data">Data</h1>
 <p>The data used in the current project contains a number of diagnostic measures of type 2 diabetes in women of the Pima Indian heritage, and whether or not the individual has type 2 diabetes. The dataset was obtained from Kaggle at (<a href="https://www.kaggle.com/uciml/pima-indians-diabetes-database" class="uri">https://www.kaggle.com/uciml/pima-indians-diabetes-database</a>). There is a total of 768 observations and 9 variables. The variables in the dataset are:</p>
@@ -1367,16 +1401,19 @@ Diabetes$BloodPressure &lt;- NULL</code></pre>
 <div class="layout-chunk" data-layout="l-body">
 
 </div>
-<div class="layout-chunk" data-layout="l-body">
-<pre class="r"><code>
-str(mode)</code></pre>
-<pre><code>
-function (v)  
- - attr(*, &quot;srcref&quot;)= &#39;srcref&#39; int [1:8] 1 9 4 1 9 1 1 4
-  ..- attr(*, &quot;srcfile&quot;)=Classes &#39;srcfilecopy&#39;, &#39;srcfile&#39; &lt;environment: 0x000000002044d1c8&gt; </code></pre>
-</div>
 <h1 id="visualisation-of-variables">Visualisation of variables</h1>
 <h2 id="numeric-variables">Numeric Variables</h2>
+<div class="layout-chunk" data-layout="l-body">
+<pre class="r"><code>
+print(mode)</code></pre>
+<pre><code>
+function(v) {
+   uniqv &lt;- unique(v)
+   uniqv[which.max(tabulate(match(v, uniqv)))]
+}
+&lt;bytecode: 0x00000000204455f0&gt;</code></pre>
+</div>
+<p>I want to find the mode of the numeric variables. I will use the above function for mode as R does not currently have a supported function to calculate mode.</p>
 <h3 id="age">Age</h3>
 <div class="layout-chunk" data-layout="l-body">
 <pre class="r"><code>

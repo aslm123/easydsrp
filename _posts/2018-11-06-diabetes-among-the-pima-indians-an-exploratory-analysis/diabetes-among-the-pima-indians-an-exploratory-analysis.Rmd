@@ -5,18 +5,21 @@ description: |
   data. Most novices to data science would rush into data preprocessing and not explore the data properly. The data cleaning stage can be subjective 
   at times and here I offer my own view and opinions on this dataset
 author:
-  - name: Asel Mendis
+  - name: "Asel Mendis"
     url: https://www.linkedin.com/in/asel-mendis-a620399b/
 date: 11-06-2018
 output:
   radix::radix_article:
     self_contained: false
+    toc: true
+    toc_depth: 3
 categories:
   - Data Preprocessing
   - Exploratory Analysis
   - R 
 repository_url: https://github.com/aslm123/easydsrp
 creative_commons: CC BY
+
 ---
 
 ```{r setup, include=FALSE}
@@ -273,13 +276,15 @@ Diabetes$BloodPressure <- NULL
 load('C:/Users/aselr/Documents/R Programming/mode.rda') # Function to calculate mode
 ```
 
-```{r}
-str(mode)
-```
+
 
 # Visualisation of variables 
 
 ## Numeric Variables
+```{r}
+print(mode)
+```
+I want to find the mode of the numeric variables. I will use the above function for mode as R does not currently have a supported function to calculate mode.
 
 ### Age
 ```{r}

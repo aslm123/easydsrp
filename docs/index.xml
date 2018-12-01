@@ -16,7 +16,7 @@ data science doomain and this is how I would like to share my knowledge with the
       <title>Decision Tree Classification of Diabetes among the Pima Indian Community in R using mlr</title>
       <dc:creator>Asel Mendis</dc:creator>
       <link>https://easydsrp.com/posts/2018-11-10-diabetes-among-the-pima-indians-supervised-learning-classification</link>
-      <description>In my last post I conducted EDA on the Pima Indians dataset to get it ready for a suite of Machine Learning techniques. My second post will explore just that. Taking one step at a time, my incoming posts will include one Machine Learning technique showing an indepth (as indepth as I can get) look at how to conduct each technique. Lets start with Decision Trees!</description>
+      <description>In my last post I conducted EDA on the Pima Indians dataset to get it ready for a suite of Machine Learning techniques. My second post will explore just that. Taking one step at a time, my incoming posts will include one Machine Learning technique showing an in-depth (as in-depth as I can get) look at how to conduct each technique. Lets start with Decision Trees!</description>
       <guid>https://easydsrp.com/posts/2018-11-10-diabetes-among-the-pima-indians-supervised-learning-classification</guid>
       <pubDate>Sat, 10 Nov 2018 00:00:00 +0000</pubDate>
       <media:content url="https://easydsrp.com/posts/2018-11-10-diabetes-among-the-pima-indians-supervised-learning-classification/diabetes-among-the-pima-indians-supervised-learning-classification_files/figure-html5/unnamed-chunk-22-1.png" medium="image" type="image/png" width="2880" height="1248"/>
