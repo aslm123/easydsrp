@@ -25,7 +25,7 @@ navbar:
     - icon: fa fa-envelope-o
       href: mailto:aselmendis123@gmail.com
     - icon: fa fa-medium
-      href: https://medium.com/@aselmendis123
+      href: https://medium.com/@aselmendis
 collections:
   posts:
     disqus: https-aslm123-github-io-easydsrp
