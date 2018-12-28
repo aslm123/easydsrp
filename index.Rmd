@@ -3,3 +3,15 @@ title: "Easy Data Science with R and Python"
 site: radix::radix_website
 listing: posts
 ---
+<script>
+  (function() {
+    var cx = '008163512119290710096:r3vhszxcrve';
+    var gcse = document.createElement('script');
+    gcse.type = 'text/javascript';
+    gcse.async = true;
+    gcse.src = 'https://cse.google.com/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gcse, s);
+  })();
+</script>
+<gcse:search></gcse:search>
