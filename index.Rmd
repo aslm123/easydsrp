@@ -1,5 +1,5 @@
 ---
-title: "Easy Data Science with R and Python"
+title: "R && Python <- Data Science"
 site: radix::radix_website
 listing: posts
 ---
